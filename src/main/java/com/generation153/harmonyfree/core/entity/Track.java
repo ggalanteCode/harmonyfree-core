@@ -60,10 +60,10 @@ public class Track {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "tracks", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "track", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaylistTrack> playlistTracks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tracks", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "track", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserFavoriteTrack> favoriteTracks = new ArrayList<>();
 
 }
