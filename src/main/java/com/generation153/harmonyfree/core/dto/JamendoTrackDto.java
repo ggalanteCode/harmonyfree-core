@@ -11,15 +11,18 @@ public class JamendoTrackDto {
     private String name;
     private String artist_name;
     private String album_name;
+    private String tags;
 
     private Long artistId;
     private Long albumId;
     
 	@Override
 	public String toString() {
-		return "JamendoTrackDto [id=" + id + ", name=" + name + ", artistName=" + artist_name + ", albumName="
-				+ album_name + ", artistId=" + artistId + ", albumId=" + albumId + "]";
+		return "JamendoTrackDto [id=" + id + ", name=" + name + ", artist_name=" + artist_name + ", album_name="
+				+ album_name + ", tags=" + tags + ", artistId=" + artistId + ", albumId=" + albumId + "]";
 	}
+    
+	
     
     
 }

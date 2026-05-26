@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
-import com.generation153.harmonyfree.core.exception.BadRequestException;
 import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
-import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 import com.generation153.harmonyfree.core.service.TrackService;
@@ -32,24 +30,24 @@ public class TrackServiceImpl implements TrackService {
 	@Override
 	public List<TrackSearchResponse> getTracks(TrackSearchRequest request) {
 		
-		// 🔹 chiamata al client
-	    JamendoSearchResponse response =
-	            jamendoClient.searchTracks(request);
+		//chiamata al client
+	    JamendoSearchResponse response = jamendoClient.searchTracks(request);
 	    
 	    log.info("response: "+response);
 
-	    // 🔹 gestione empty/null
+	    //gestione empty/null
 	    if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
 	        return Collections.emptyList();
 	    }
 
-	    // 🔹 mapping
+	    //mapping
 	    return response.getResults().stream()
 	            .map(dto -> new TrackSearchResponse(
 	                    dto.getId(),              // jamendoId
 	                    dto.getName(),
 	                    dto.getArtist_name(),
-	                    dto.getAlbum_name()
+	                    dto.getAlbum_name(),
+	                    dto.getTags() //
 	            ))
 	            .toList();
 		
