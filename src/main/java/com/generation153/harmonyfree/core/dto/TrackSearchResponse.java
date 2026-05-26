@@ -15,5 +15,6 @@ public class TrackSearchResponse {
     private String title;
     private String artist;
     private String album;
+    private String tags;
 
 }
