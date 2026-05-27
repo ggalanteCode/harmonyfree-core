@@ -39,6 +39,7 @@ public class JamendoClient {
                         .queryParamIfPresent("artist_name", Optional.ofNullable(request.getArtist()))
                         .queryParamIfPresent("album_name", Optional.ofNullable(request.getAlbum()))
                         .queryParamIfPresent("tags", Optional.ofNullable(request.getGenre()))
+                        .queryParam("include", "musicinfo")
                         .build())
                 .retrieve()
                 .bodyToMono(JamendoSearchResponse.class)

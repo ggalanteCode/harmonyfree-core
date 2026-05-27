@@ -21,7 +21,7 @@ public class JamendoTrackDto {
     @JsonProperty("album_name")
     private String albumName;
 
-    private Tags tags;
+    private MusicInfo musicinfo;
 
     private Long artistId;
     private Long albumId;

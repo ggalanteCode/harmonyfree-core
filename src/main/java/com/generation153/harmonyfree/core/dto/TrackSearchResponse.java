@@ -1,5 +1,7 @@
 package com.generation153.harmonyfree.core.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,6 @@ public class TrackSearchResponse {
     private String title;
     private String artist;
     private String album;
-    private String tags;
+    private List<String> genres;
 
 }

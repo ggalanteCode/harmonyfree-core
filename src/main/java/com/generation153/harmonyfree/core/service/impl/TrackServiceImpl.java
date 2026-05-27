@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
 import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
+import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 import com.generation153.harmonyfree.core.service.TrackService;
@@ -47,12 +48,27 @@ public class TrackServiceImpl implements TrackService {
 	                    dto.getName(),
 	                    dto.getArtistName(),
 	                    dto.getAlbumName(),
-	                    dto.getTags().getGenres().get(0) //
+	                    extractGenres(dto) //lista dei generi musicali
 	            ))
 	            .toList();
 		
 	}
 	
+	private List<String> extractGenres(JamendoTrackDto dto) {
+
+	    if (areInfoOnGenresNull(dto)) {
+	        return List.of();
+	    }
+
+	    return dto.getMusicinfo().getTags().getGenres();
+	}
+	
+	private boolean areInfoOnGenresNull(JamendoTrackDto dto) {
+		return dto.getMusicinfo() == null 
+				|| dto.getMusicinfo().getTags() == null 
+				|| dto.getMusicinfo().getTags().getGenres() == null;
+	}
+
 	@Override
 	public TrackSearchResponse getTrackById(Long jamendoTrackId) {
 		// TODO Auto-generated method stub
