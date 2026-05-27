@@ -56,14 +56,14 @@ public class TrackServiceImpl implements TrackService {
 	
 	private List<String> extractGenres(JamendoTrackDto dto) {
 
-	    if (areInfoOnGenresNull(dto)) {
+	    if (hasNoGenres(dto)) {
 	        return List.of();
 	    }
 
 	    return dto.getMusicinfo().getTags().getGenres();
 	}
 	
-	private boolean areInfoOnGenresNull(JamendoTrackDto dto) {
+	private boolean hasNoGenres(JamendoTrackDto dto) {
 		return dto.getMusicinfo() == null 
 				|| dto.getMusicinfo().getTags() == null 
 				|| dto.getMusicinfo().getTags().getGenres() == null;
