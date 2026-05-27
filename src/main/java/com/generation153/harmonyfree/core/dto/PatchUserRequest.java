@@ -57,4 +57,10 @@ public class PatchUserRequest {
 		this.profileImageUrl = profileImageUrl;
 	}
 
+	@Override
+	public String toString() {
+		return "PatchUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", email=" + email + ", displayName=" + displayName + ", profileImageUrl=" + profileImageUrl + "]";
+	}
+
 }

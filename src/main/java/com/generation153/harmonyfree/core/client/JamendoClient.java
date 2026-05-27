@@ -46,5 +46,10 @@ public class JamendoClient {
                 .block();
     	
     }
+
+	public JamendoSearchResponse getTrackById(Long jamendoTrackId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
