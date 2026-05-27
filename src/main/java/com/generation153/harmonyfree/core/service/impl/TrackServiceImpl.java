@@ -45,9 +45,9 @@ public class TrackServiceImpl implements TrackService {
 	            .map(dto -> new TrackSearchResponse(
 	                    dto.getId(),              // jamendoId
 	                    dto.getName(),
-	                    dto.getArtist_name(),
-	                    dto.getAlbum_name(),
-	                    dto.getTags() //
+	                    dto.getArtistName(),
+	                    dto.getAlbumName(),
+	                    dto.getTags().getGenres().get(0) //
 	            ))
 	            .toList();
 		
