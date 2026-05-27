@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.generation153.harmonyfree.core.dto.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.CreateUserRequest;
 import com.generation153.harmonyfree.core.dto.PatchUserRequest;
+import com.generation153.harmonyfree.core.dto.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.TrackResponse;
 import com.generation153.harmonyfree.core.dto.UserResponse;
 import com.generation153.harmonyfree.core.service.UserService;
@@ -62,7 +63,7 @@ public class UserController<UpdateUserRequest> {
 	}
 
 	@GetMapping("/{userId}/favorites")
-	public List<TrackResponse> getFavorites(@PathVariable Long userId) { 
+	public List<TrackResponse> getFavorites(@PathVariable Long userId) {
 		return userService.getUserFavorites(userId);
 	}
 
@@ -71,10 +72,10 @@ public class UserController<UpdateUserRequest> {
 		userService.removeFavorite(userId, trackId);
 	}
 
-//	@GetMapping("/{userId}/playlists")
-	// public List<PlaylistResponse> getUserPlaylists(@PathVariable Long userId) {
-	// return userService.getUserPlaylists(userId);
+	@GetMapping("/{userId}/playlists")
+	public List<PlaylistResponse> getUserPlaylists(@PathVariable Long userId) {
+		return userService.getUserPlaylists(userId);
+
+	}
 
 }
-
-//}
