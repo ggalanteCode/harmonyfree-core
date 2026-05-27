@@ -2,6 +2,8 @@ package com.generation153.harmonyfree.core.service.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.generation153.harmonyfree.core.dto.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.CreateUserRequest;
 import com.generation153.harmonyfree.core.dto.PatchUserRequest;
@@ -10,6 +12,7 @@ import com.generation153.harmonyfree.core.dto.UserResponse;
 //import com.generation153.harmonyfree.core.service.PlaylistResponse;
 import com.generation153.harmonyfree.core.service.UserService;
 
+@Service
 public class UserServiceImpl implements UserService {
 
 	@Override
