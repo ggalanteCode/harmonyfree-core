@@ -1,0 +1,30 @@
+package com.generation153.harmonyfree.core.contoller;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.generation153.harmonyfree.core.dto.CreatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.PlaylistResponse;
+import com.generation153.harmonyfree.core.service.PlaylistService;
+
+@RestController
+@RequestMapping("/api/v1/playlists")
+public class PlaylistController {
+
+    private final PlaylistService playlistService;
+
+    public PlaylistController(PlaylistService playlistService) {
+        this.playlistService = playlistService;
+    }
+
+    // API: POST http://localhost:8080/api/v1/playlists
+    @PostMapping
+    public PlaylistResponse createPlaylist(@RequestBody CreatePlaylistRequest request) {
+        return playlistService.createPlaylist(request);
+    }
+
+    // API: GET http://localhost:8080/api/v1/playlists/{id}
+    @GetMapping("/{id}")
+    public PlaylistResponse getPlaylistById(@PathVariable Long id) {
+        return playlistService.getPlaylistById(id);
+    }
+}
