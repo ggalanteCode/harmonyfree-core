@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.generation153.harmonyfree.core.dto.CreatePlaylistRequest;
 import com.generation153.harmonyfree.core.dto.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
+import com.generation153.harmonyfree.core.dto.UpdatePlaylistRequest;
 import com.generation153.harmonyfree.core.entity.Playlist;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.entity.User;
@@ -26,13 +27,13 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final UserRepository userRepository;
 
     
-    // 🔹 POST - CREATE PLAYLIST
+    //  POST - CREATE PLAYLIST
     
 
     @Override
     public PlaylistResponse createPlaylist(CreatePlaylistRequest request) {
 
-        // 🔹 VALIDAZIONE
+        //  VALIDAZIONE
         if (request.getUserId() == null) {
             throw new RuntimeException("UserId is required");
         }
@@ -41,11 +42,11 @@ public class PlaylistServiceImpl implements PlaylistService {
             throw new RuntimeException("Title is required");
         }
 
-        // 🔹 RECUPERO UTENTE
+        //  RECUPERO UTENTE
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 🔹 CREAZIONE ENTITY
+        //  CREAZIONE ENTITY
         Playlist playlist = new Playlist();
         playlist.setUser(user);
         playlist.setTitle(request.getTitle());
@@ -53,18 +54,18 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlist.setCreatedAt(LocalDateTime.now());
         playlist.setUpdatedAt(LocalDateTime.now());
 
-        // 🔹 LISTA VUOTA
+        //  LISTA VUOTA
         playlist.setPlaylistTracks(new ArrayList<>());
 
-        // 🔹 SAVE
+        //  SAVE
         Playlist saved = playlistRepository.save(playlist);
 
-        // 🔹 MAPPING
+        //  MAPPING
         return mapToPlaylistResponse(saved);
     }
 
     
-    // 🔹 GET - PLAYLIST BY ID
+    //  GET - PLAYLIST BY ID
     
 
     @Override
@@ -86,9 +87,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         );
     }
 
-    //
+    
     //  MAPPING PLAYLIST
-    //
+    
 
     private PlaylistResponse mapToPlaylistResponse(Playlist playlist) {
         return new PlaylistResponse(
@@ -100,9 +101,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         );
     }
 
-    //
+    
     //  MAPPING TRACK
-    //
+    
 
     private TrackSearchResponse mapToTrackResponse(Track track) {
         return new TrackSearchResponse(
@@ -113,5 +114,107 @@ public class PlaylistServiceImpl implements PlaylistService {
                 null
                 
         );
+    }
+ // PUT - UPDATE PLAYLIST
+
+    @Override
+    public PlaylistResponse updatePlaylist(Long id, UpdatePlaylistRequest request) {
+
+        //  VALIDAZIONE
+        if (request.getTitle() == null || request.getTitle().isBlank()) {
+            throw new RuntimeException("Title is required");
+        }
+
+        //  RECUPERO PLAYLIST
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+        //  UPDATE CAMPI
+        playlist.setTitle(request.getTitle());
+        playlist.setDescription(request.getDescription());
+
+        //  UPDATE TIMESTAMP
+        playlist.setUpdatedAt(LocalDateTime.now());
+
+        //  SAVE
+        Playlist updatedPlaylist = playlistRepository.save(playlist);
+
+        //  RESPONSE
+        return new PlaylistResponse(
+                updatedPlaylist.getId(),
+                updatedPlaylist.getTitle(),
+                updatedPlaylist.getDescription(),
+                updatedPlaylist.getCreatedAt(),
+                List.of()
+        );
+    }
+ // PATCH - PARTIAL UPDATE PLAYLIST
+
+    @Override
+    public PlaylistResponse patchPlaylist(Long id, UpdatePlaylistRequest request) {
+
+        // RECUPERO PLAYLIST
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+        // VALIDAZIONE MINIMA
+        if (request.getTitle() == null && request.getDescription() == null) {
+            throw new RuntimeException("At least one field must be provided");
+        }
+
+        // UPDATE PARZIALE
+        if (request.getTitle() != null) {
+
+            if (request.getTitle().isBlank()) {
+                throw new RuntimeException("Title cannot be blank");
+            }
+
+            playlist.setTitle(request.getTitle());
+        }
+
+        if (request.getDescription() != null) {
+            playlist.setDescription(request.getDescription());
+        }
+
+        // UPDATE TIMESTAMP
+        playlist.setUpdatedAt(LocalDateTime.now());
+
+        // SAVE
+        Playlist updatedPlaylist = playlistRepository.save(playlist);
+
+        // RESPONSE
+        return new PlaylistResponse(
+                updatedPlaylist.getId(),
+                updatedPlaylist.getTitle(),
+                updatedPlaylist.getDescription(),
+                updatedPlaylist.getCreatedAt(),
+                List.of()
+        );
+    }
+ // DELETE - PLAYLIST
+
+    @Override
+    public void deletePlaylist(Long id) {
+
+        // RECUPERO PLAYLIST
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+        // DELETE PLAYLIST
+        playlistRepository.delete(playlist);
+    }
+ // GET - PLAYLIST TRACKS
+
+    @Override
+    public List<TrackSearchResponse> getPlaylistTracks(Long playlistId) {
+
+        // RECUPERO PLAYLIST + TRACKS
+        Playlist playlist = playlistRepository.findByIdWithTracks(playlistId)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+        // MAPPING TRACKS
+        return playlist.getPlaylistTracks().stream()
+                .map(pt -> mapToTrackResponse(pt.getTrack()))
+                .toList();
     }
 }
