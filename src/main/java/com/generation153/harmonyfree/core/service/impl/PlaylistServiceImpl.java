@@ -25,9 +25,9 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final UserRepository userRepository;
 
-    // =====================================================
+    
     // 🔹 POST - CREATE PLAYLIST
-    // =====================================================
+    
 
     @Override
     public PlaylistResponse createPlaylist(CreatePlaylistRequest request) {
@@ -63,9 +63,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         return mapToPlaylistResponse(saved);
     }
 
-    // =====================================================
+    
     // 🔹 GET - PLAYLIST BY ID
-    // =====================================================
+    
 
     @Override
     public PlaylistResponse getPlaylistById(Long id) {
@@ -86,9 +86,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         );
     }
 
-    // =====================================================
-    // 🔁 MAPPING PLAYLIST
-    // =====================================================
+    //
+    //  MAPPING PLAYLIST
+    //
 
     private PlaylistResponse mapToPlaylistResponse(Playlist playlist) {
         return new PlaylistResponse(
@@ -100,16 +100,18 @@ public class PlaylistServiceImpl implements PlaylistService {
         );
     }
 
-    // =====================================================
-    // 🔁 MAPPING TRACK
-    // =====================================================
+    //
+    //  MAPPING TRACK
+    //
 
     private TrackSearchResponse mapToTrackResponse(Track track) {
         return new TrackSearchResponse(
                 track.getId(),
                 track.getTitle(),
                 track.getArtistName(),
-                track.getAlbumName()
+                track.getAlbumName(),
+                null
+                
         );
     }
 }
