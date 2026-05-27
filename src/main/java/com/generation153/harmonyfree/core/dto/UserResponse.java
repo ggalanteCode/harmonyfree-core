@@ -65,4 +65,12 @@ public class UserResponse {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	@Override
+	public String toString() {
+		return "UserResponse [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", displayName=" + displayName + ", profileImageUrl=" + profileImageUrl + ", email="
+				+ email + "]";
+	}
+	
 }

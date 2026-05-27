@@ -38,4 +38,11 @@ public class CreateUserRequest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	@Override
+	public String toString() {
+		return "CreateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", email=" + email + "]";
+	}
+	
 }

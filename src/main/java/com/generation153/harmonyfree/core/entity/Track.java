@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -47,7 +48,11 @@ public class Track {
     @Column(name = "album_name")
     private String albumName;
 
-    private String genre;
+    //non vogliamo che i generi di un brano vengano concatenati nella stessa stringa,
+    //di conseguenza terremo traccia di tutti i generi del brano in una tabella che conterrà tutti i generi
+    //associati all'id di un brano
+    @ElementCollection
+    private List<String> genres;
 
     private Integer duration;
 
@@ -60,10 +65,10 @@ public class Track {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "track", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "track")
     private List<PlaylistTrack> playlistTracks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "track", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "track")
     private List<UserFavoriteTrack> favoriteTracks = new ArrayList<>();
 
 }

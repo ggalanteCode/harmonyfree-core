@@ -39,11 +39,17 @@ public class JamendoClient {
                         .queryParamIfPresent("artist_name", Optional.ofNullable(request.getArtist()))
                         .queryParamIfPresent("album_name", Optional.ofNullable(request.getAlbum()))
                         .queryParamIfPresent("tags", Optional.ofNullable(request.getGenre()))
+                        .queryParam("include", "musicinfo")
                         .build())
                 .retrieve()
                 .bodyToMono(JamendoSearchResponse.class)
                 .block();
     	
     }
+
+	public JamendoSearchResponse getTrackById(Long jamendoTrackId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

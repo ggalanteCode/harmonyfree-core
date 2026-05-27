@@ -20,12 +20,18 @@ public class JamendoTrackDto {
 
     @JsonProperty("album_name")
     private String albumName;
+    
+    private Integer duration;
+    
+    @JsonProperty("audio")
+    private String audioUrl;	//URL dell'audio da ascoltareù
+    
+    @JsonProperty("image")
+    private String coverUrl;	//URL della copertina
 
-    private Tags tags;
+    private MusicInfo musicinfo;	//contiene i metadati dell'album, tra cui i genre
 
     private Long artistId;
     private Long albumId;
-    
-	
     
 }
