@@ -18,31 +18,27 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Entity
-@Table(
-    name = "user_favorite_tracks",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "track_id"})
-    }
-)
+@Table(name = "user_favorite_tracks", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "user_id", "track_id" }) })
 @Getter
 @Setter
 @NoArgsConstructor
 @Slf4j
 public class UserFavoriteTrack {
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "track_id", nullable = false)
-    private Track track;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "track_id", nullable = false)
+	private Track track;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
 
 }
