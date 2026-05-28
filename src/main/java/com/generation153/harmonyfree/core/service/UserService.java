@@ -8,13 +8,14 @@ import com.generation153.harmonyfree.core.dto.CreateUserRequest;
 import com.generation153.harmonyfree.core.dto.PatchUserRequest;
 import com.generation153.harmonyfree.core.dto.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.TrackResponse;
+import com.generation153.harmonyfree.core.dto.UpdateUserRequest;
 import com.generation153.harmonyfree.core.dto.UserResponse;
 
 public interface UserService {
 
 	UserResponse getUserById(Long id);
 
-	<UpdateUserRequest> UserResponse updateUser(Long id, UpdateUserRequest request);
+	UserResponse updateUser(Long id, UpdateUserRequest request);
 
 	void deleteUser(Long id);
 
@@ -29,6 +30,5 @@ public interface UserService {
 	UserResponse patchUser(Long id, PatchUserRequest request);
 
 	List<TrackResponse> addFavorite(Long userId, AddTrackRequest request);
-
 
 }

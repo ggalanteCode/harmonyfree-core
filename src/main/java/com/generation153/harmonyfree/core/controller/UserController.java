@@ -1,4 +1,6 @@
+
 package com.generation153.harmonyfree.core.controller;
+import com.generation153.harmonyfree.core.dto.UpdateUserRequest;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ import com.generation153.harmonyfree.core.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController<UpdateUserRequest> {
+public class UserController {
 
 	private final UserService userService;
 
