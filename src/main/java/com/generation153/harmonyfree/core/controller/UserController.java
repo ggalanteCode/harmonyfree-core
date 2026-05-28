@@ -1,5 +1,7 @@
-package com.generation153.harmonyfree.core.contoller;
+
+package com.generation153.harmonyfree.core.controller;
 import com.generation153.harmonyfree.core.dto.UpdateUserRequest;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;

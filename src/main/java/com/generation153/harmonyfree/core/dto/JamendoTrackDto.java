@@ -31,7 +31,10 @@ public class JamendoTrackDto {
 
     private MusicInfo musicinfo;	//contiene i metadati dell'album, tra cui i genre
 
+    @JsonProperty("artist_id")
     private Long artistId;
+    
+    @JsonProperty("album_id")
     private Long albumId;
     
 }

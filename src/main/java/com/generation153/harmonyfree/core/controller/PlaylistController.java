@@ -1,10 +1,13 @@
-package com.generation153.harmonyfree.core.contoller;
+package com.generation153.harmonyfree.core.controller;
 
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import com.generation153.harmonyfree.core.dto.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.CreatePlaylistRequest;
 import com.generation153.harmonyfree.core.dto.PlaylistResponse;
+import com.generation153.harmonyfree.core.dto.TrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
 import com.generation153.harmonyfree.core.dto.UpdatePlaylistRequest;
 import com.generation153.harmonyfree.core.service.PlaylistService;
@@ -55,8 +58,25 @@ public class PlaylistController {
     }
  // API: GET http://localhost:8080/api/v1/playlists/{id}/tracks
     @GetMapping("/{id}/tracks")
-    public List<TrackSearchResponse> getPlaylistTracks(@PathVariable Long id) {
+    public List<TrackResponse> getPlaylistTracks(@PathVariable Long id) {
 
         return playlistService.getPlaylistTracks(id);
     }
+ // API: POST http://localhost:8080/api/v1/playlists/{id}/tracks
+    @PostMapping("/{id}/tracks")
+    public PlaylistResponse addTrackToPlaylist(
+            @PathVariable Long id,
+            @RequestBody AddTrackRequest request) {
+
+        return playlistService.addTrackToPlaylist(id, request);
+    }
+ // API: DELETE http://localhost:8080/api/v1/playlists/{playlistId}/tracks/{trackId}
+    @DeleteMapping("/{playlistId}/tracks/{trackId}")
+    public void removeTrackFromPlaylist(
+            @PathVariable Long playlistId,
+            @PathVariable Long trackId) {
+
+        playlistService.removeTrackFromPlaylist(playlistId, trackId);
+    }
+ 
 }
