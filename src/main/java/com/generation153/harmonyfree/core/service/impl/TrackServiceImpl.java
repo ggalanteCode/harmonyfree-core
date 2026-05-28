@@ -14,6 +14,7 @@ import com.generation153.harmonyfree.core.exception.BadRequestException;
 import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
 import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
+import com.generation153.harmonyfree.core.dto.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
@@ -76,6 +77,7 @@ public class TrackServiceImpl implements TrackService {
                 dto.getArtistName(),
                 dto.getAlbumName(),
                 extractGenres(dto), //lista dei generi musicali
+                dto.getDuration(),
                 dto.getCoverUrl(),
                 dto.getAudioUrl()
         );
@@ -90,24 +92,33 @@ public class TrackServiceImpl implements TrackService {
 	    }
 
 	    // 1. DB lookup: ovvero cerca nel db se la traccia con l'id specificato esiste oppure no.
-	    Optional<Track> existing = trackRepository.findByJamendoTrackId(jamendoTrackId);
+	    Optional<Track> existingTrack = trackRepository.findByJamendoTrackId(jamendoTrackId);
 
 	    //se la traccia cercata esiste nel db
-	    if (existing.isPresent()) {
+	    if (existingTrack.isPresent()) {
+	    	log.info("getTrackById: track exists in db: " + existingTrack.get());
+	    	log.info("getTrackById: genres: " + existingTrack.get().getGenres());
 	    	//la mappiamo nella response e la restituiamo
-	        return mapToTrackResponse(existing.get());
+	        return mapToTrackResponse(existingTrack.get());
 	    }
+	    
+	    log.info("getTrackById: track does not exists in db: call jamendo API");
 
 	    //altrimenti
 	    // 2. Jamendo fallback: ovvero chiama Jamendo per cercare la traccia desiderata con quell'id
-	    JamendoSearchResponse response = jamendoClient.getTrackById(jamendoTrackId);
+	    JamendoTrackResponse response = jamendoClient.getTrackById(jamendoTrackId);
 
 	    if (response == null || response.getResults().isEmpty()) {
 	        throw new ResourceNotFoundException("Track not found");
 	    }
+	    
+	    log.info("getTrackById: track found in Jamendo API: " + response);
 
 	    // 3. mapping DTO → entity
 	    JamendoTrackDto dto = response.getResults().get(0);	//la traccia restituita è una sola
+	    
+	    log.info("getTrackById: genres: " + extractGenres(dto));
+	    
 	    Track track = mapToEntity(dto);
 
 	    // 4. save (cache)
@@ -134,16 +145,18 @@ public class TrackServiceImpl implements TrackService {
 	}
 
 	private TrackResponse mapToTrackResponse(Track track) {
-		TrackResponse response = new TrackResponse();
-	    response.setId(track.getId());
-	    response.setJamendoTrackId(track.getJamendoTrackId());
-	    response.setTitle(track.getTitle());
-	    response.setArtist(track.getArtistName());
-	    response.setAlbum(track.getAlbumName());
-	    response.setGenres(track.getGenres() != null ? track.getGenres() : List.of());
-	    response.setCoverImageUrl(track.getCoverUrl());
-	    response.setAudioUrl(track.getAudioUrl());
-	    response.setCreatedAt(track.getCreatedAt());
+		TrackResponse response = new TrackResponse(
+				track.getId(), 
+				track.getJamendoTrackId(), 
+				track.getTitle(), 
+				track.getArtistName(), 
+				track.getAlbumName(), 
+				track.getGenres() != null ? track.getGenres() : List.of(), 
+				track.getDuration(), 
+				track.getCoverUrl(), 
+				track.getAudioUrl(), 
+				track.getCreatedAt()
+		);
 	    return response;
 	}
 
