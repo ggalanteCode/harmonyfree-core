@@ -1,4 +1,4 @@
-package com.generation153.harmonyfree.core.contoller;
+package com.generation153.harmonyfree.core.controller;
 
 import org.springframework.web.bind.annotation.*;
 
