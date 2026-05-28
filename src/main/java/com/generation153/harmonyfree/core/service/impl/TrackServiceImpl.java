@@ -45,6 +45,7 @@ public class TrackServiceImpl implements TrackService {
 
 	    //gestione empty/null
 	    if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
+	    	log.info("response list empty");
 	        return Collections.emptyList();
 	    }
 
