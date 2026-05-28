@@ -20,6 +20,7 @@ public class TrackSearchResponse {
     private String artist;
     private String album;
     private List<String> genres;
+    private Integer duration;
     
     //vogliamo che questi dati siano disponibili anche durante la ricerca semplice con filtri
     private String coverImageUrl;	//per poter visualizzare la copertina su frontend

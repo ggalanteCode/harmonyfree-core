@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.generation153.harmonyfree.core.config.JamendoProperties;
 import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
+import com.generation153.harmonyfree.core.dto.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +48,21 @@ public class JamendoClient {
     	
     }
 
-	public JamendoSearchResponse getTrackById(Long jamendoTrackId) {
-		// TODO Auto-generated method stub
-		return null;
+	public JamendoTrackResponse getTrackById(Long jamendoTrackId) {
+		
+		log.info("Jamendo clientId: " + clientId);
+		
+		return webClient.get()
+	            .uri(uriBuilder -> uriBuilder
+	                    .path("/tracks")
+	                    .queryParam("client_id", clientId)
+	                    .queryParam("id", jamendoTrackId)
+	                    .queryParam("format", "json")
+	                    .queryParam("include", "musicinfo")
+	                    .build())
+	            .retrieve()
+	            .bodyToMono(JamendoTrackResponse.class)
+	            .block();
 	}
     
 }
