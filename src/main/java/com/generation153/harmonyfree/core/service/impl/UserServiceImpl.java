@@ -10,56 +10,70 @@ import com.generation153.harmonyfree.core.dto.CreateUserRequest;
 import com.generation153.harmonyfree.core.dto.PatchUserRequest;
 import com.generation153.harmonyfree.core.dto.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.TrackResponse;
+import com.generation153.harmonyfree.core.dto.UpdateUserRequest;
 import com.generation153.harmonyfree.core.dto.UserResponse;
 import com.generation153.harmonyfree.core.entity.User;
-import com.generation153.harmonyfree.core.exception.BadRequestException;
+import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.UserRepository;
-//import com.generation153.harmonyfree.core.service.PlaylistResponse;
+
 import com.generation153.harmonyfree.core.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	//INJECTION REPOSITORY
+
+	// INJECTION REPOSITORY
 	public final UserRepository userRepository;
 
 	public UserServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	//GET USER BY ID (CREAZIONE UTENTE NEL DATABASE) DA COMPLETARE!!
+
+	// GET USER BY ID (CREAZIONE UTENTE NEL DATABASE) DA COMPLETARE!!
 	@Override
 	public UserResponse getUserById(Long id) {
-		User user = userRepository.findById(id).orElseThrow(() -> new BadRequestException("User non trovato"));
-		
-		
-		
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
+
 		return mapToResponse(user);
 	}
 
 	@Override
-	public <UpdateUserRequest> UserResponse updateUser(Long id, UpdateUserRequest request) {
-		return null;
+	public UserResponse updateUser(Long id, UpdateUserRequest request) {
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
+		user.setUsername(request.getUsername());
+		user.setFirstName(request.getFirstName());
+		user.setLastName(request.getLastName());
+		user.setEmail(request.getEmail());
+		User saved = userRepository.save(user);
+
+		return mapToResponse(saved);
+
 	}
-	//CANCELLA USER
+
+	// CANCELLA USER
 	@Override
 	public void deleteUser(Long id) {
 		userRepository.deleteById(id);
 	}
-	//TRACCE FAVORITE USER
+
+	// TRACCE FAVORITE USER
 	@Override
 	public List<TrackResponse> getUserFavorites(Long userId) {
 		return new ArrayList<>();
 	}
-	//RIMUOVE I PREFERITI
+
+	// RIMUOVE I PREFERITI
 	@Override
 	public void removeFavorite(Long userId, Long trackId) {
 
 	}
-	//PLAYLIST USER 
+
+	// PLAYLIST USER
 	@Override
 	public List<PlaylistResponse> getUserPlaylists(Long userId) {
 		return new ArrayList<>();
 	}
-	//CREAZIONE USER
+
+	// CREAZIONE USER
 	@Override
 	public UserResponse createUser(CreateUserRequest request) {
 		User user = new User();
@@ -70,10 +84,10 @@ public class UserServiceImpl implements UserService {
 		User saved = userRepository.save(user);
 		return mapToResponse(saved);
 	}
-	
+
 	@Override
 	public UserResponse patchUser(Long id, PatchUserRequest request) {
-		User user = userRepository.findById(id).orElseThrow(() -> new BadRequestException("User non trovato"));
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
 
 		if (request.getUsername() != null) {
 			user.setUsername(request.getUsername());
@@ -95,7 +109,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return mapToResponse(userRepository.save(user));
 	}
-	
+
 	@Override
 	public List<TrackResponse> addFavorite(Long userId, AddTrackRequest request) {
 		return null;
@@ -110,4 +124,5 @@ public class UserServiceImpl implements UserService {
 		res.setEmail(user.getEmail());
 		return res;
 	}
+
 }
