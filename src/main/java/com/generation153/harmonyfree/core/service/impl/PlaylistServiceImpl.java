@@ -272,7 +272,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             track.setAlbumName(dto.getAlbumName());
 
-            //  (AGGIUNGERE genre NELLA ENTITY Track ?)
+            //  (AGGIUNGERE genre NELLA ENTITY Track ?)                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // track.setGenre(null);
 
             track.setAudioUrl(dto.getAudioUrl());
@@ -374,4 +374,45 @@ public class PlaylistServiceImpl implements PlaylistService {
                 tracks
         );
     }
-}
+ 
+ // DELETE - REMOVE TRACK FROM PLAYLIST
+
+
+ @Override
+ public void removeTrackFromPlaylist(Long playlistId, Long trackId) {
+
+     // RECUPERO PLAYLIST + TRACKS
+     Playlist playlist = playlistRepository.findByIdWithTracks(playlistId)
+             .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+     // CERCA PLAYLIST TRACK
+     PlaylistTrack playlistTrack = playlist.getPlaylistTracks()
+             .stream()
+             .filter(pt -> pt.getTrack().getId().equals(trackId))
+             .findFirst()
+             .orElseThrow(() ->
+                     new RuntimeException("Track not found in playlist"));
+
+     // REMOVE RELAZIONE
+     playlist.getPlaylistTracks().remove(playlistTrack);
+
+     // SAVE PLAYLIST
+     playlistRepository.save(playlist);
+
+   
+     // CHECK TRACK ORFANO
+   
+
+     boolean existsInPlaylists =
+             playlistRepository.existsByPlaylistTracks_Track_Id(trackId);
+
+     //boolean existsInFavorites =
+             //userRepository.existsByFavoriteTracks_Track_Id(trackId);      fare prima i Favorites!!!!!!!!
+
+     // DELETE TRACK SE ORFANO
+     //if (!existsInPlaylists && !existsInFavorites) {
+
+         trackRepository.deleteById(trackId);
+     }
+ }
+//}

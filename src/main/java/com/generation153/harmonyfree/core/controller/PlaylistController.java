@@ -70,5 +70,13 @@ public class PlaylistController {
 
         return playlistService.addTrackToPlaylist(id, request);
     }
+ // API: DELETE http://localhost:8080/api/v1/playlists/{playlistId}/tracks/{trackId}
+    @DeleteMapping("/{playlistId}/tracks/{trackId}")
+    public void removeTrackFromPlaylist(
+            @PathVariable Long playlistId,
+            @PathVariable Long trackId) {
+
+        playlistService.removeTrackFromPlaylist(playlistId, trackId);
+    }
  
 }

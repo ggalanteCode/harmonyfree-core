@@ -29,4 +29,8 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     	    WHERE p.id = :id
     	""")
     	Optional<Playlist> findByIdWithTracks(Long id);
+    
+    // CHECK TRACK USED IN OTHER PLAYLISTS
+    
+    boolean existsByPlaylistTracks_Track_Id(Long trackId);
 }
