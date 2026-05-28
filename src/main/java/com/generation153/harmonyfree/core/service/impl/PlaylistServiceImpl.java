@@ -106,13 +106,15 @@ public class PlaylistServiceImpl implements PlaylistService {
     
 
     private TrackSearchResponse mapToTrackResponse(Track track) {
+
         return new TrackSearchResponse(
                 track.getId(),
                 track.getTitle(),
                 track.getArtistName(),
                 track.getAlbumName(),
-                null
-                
+                null,
+                track.getCoverUrl(),       
+                track.getAudioUrl()        
         );
     }
  // PUT - UPDATE PLAYLIST
