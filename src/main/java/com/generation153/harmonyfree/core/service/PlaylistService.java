@@ -26,4 +26,5 @@ public interface PlaylistService {
 	PlaylistResponse addTrackToPlaylist(Long playlistId, AddTrackRequest request);
 	
 	void removeTrackFromPlaylist(Long playlistId, Long trackId);
+	
 }

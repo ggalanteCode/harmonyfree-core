@@ -272,9 +272,6 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             track.setAlbumName(dto.getAlbumName());
 
-            //  (AGGIUNGERE genre NELLA ENTITY Track ?)                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // track.setGenre(null);
-
             track.setAudioUrl(dto.getAudioUrl());
 
             track.setCoverUrl(dto.getCoverUrl());
@@ -344,7 +341,12 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         response.setAlbum(track.getAlbumName());
 
-        response.setGenres(null);
+        response.setGenres(
+                track.getTrackGenres()
+                        .stream()
+                        .map(tg -> tg.getGenre().getName())
+                        .toList()
+        );
 
         response.setCoverImageUrl(track.getCoverUrl());
 
@@ -406,13 +408,13 @@ public class PlaylistServiceImpl implements PlaylistService {
      boolean existsInPlaylists =
              playlistRepository.existsByPlaylistTracks_Track_Id(trackId);
 
-     //boolean existsInFavorites =
-             //userRepository.existsByFavoriteTracks_Track_Id(trackId);      fare prima i Favorites!!!!!!!!
+     boolean existsInFavorites =
+             userRepository.existsByFavoriteTracks_Track_Id(trackId);      
 
      // DELETE TRACK SE ORFANO
-     //if (!existsInPlaylists && !existsInFavorites) {
+     if (!existsInPlaylists && !existsInFavorites) {
 
          trackRepository.deleteById(trackId);
      }
  }
-//}
+}
