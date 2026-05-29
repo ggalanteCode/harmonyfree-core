@@ -41,9 +41,6 @@ public class User {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(name = "display_name", length = 100)
-    private String displayName;
-
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 

@@ -5,7 +5,6 @@ public class CreateUserRequest {
 	private String username;
 	private String firstName;
 	private String lastName;
-	private String email;
 
 	public String getUsername() {
 		return username;
@@ -31,18 +30,9 @@ public class CreateUserRequest {
 		this.lastName = lastName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	@Override
 	public String toString() {
-		return "CreateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + "]";
+		return "CreateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName + "]";
 	}
 	
 }

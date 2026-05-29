@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	boolean existsByFavoriteTracks_Track_Id(Long trackId);
 
+	boolean existsByAuthUserId(Long authUserId);
+
 }
