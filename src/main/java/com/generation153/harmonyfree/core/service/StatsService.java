@@ -1,0 +1,13 @@
+package com.generation153.harmonyfree.core.service;
+
+import java.util.List;
+
+import com.generation153.harmonyfree.core.dto.TrackStatsResponse;
+
+public interface StatsService {
+
+    List<TrackStatsResponse> getMostPlayedTracks(int limit);
+    
+    List<TrackStatsResponse> getMostFavoritedTracks(int limit);
+
+}
