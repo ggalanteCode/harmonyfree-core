@@ -17,15 +17,37 @@ import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.UserRepository;
 
 import com.generation153.harmonyfree.core.service.UserService;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import com.generation153.harmonyfree.core.client.JamendoClient;
+import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
+import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
+import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
+import com.generation153.harmonyfree.core.entity.Track;
+import com.generation153.harmonyfree.core.entity.UserFavoriteTrack;
+import com.generation153.harmonyfree.core.repository.PlaylistRepository;
+import com.generation153.harmonyfree.core.repository.TrackRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	// INJECTION REPOSITORY
 	public final UserRepository userRepository;
+	public final TrackRepository trackRepository;
+	public final JamendoClient jamendoClient;
+	public final PlaylistRepository playlistRepository;
 
-	public UserServiceImpl(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public UserServiceImpl(
+	        UserRepository userRepository,
+	        TrackRepository trackRepository,
+	        PlaylistRepository playlistRepository,
+	        JamendoClient jamendoClient) {
+
+	    this.userRepository = userRepository;
+	    this.trackRepository = trackRepository;
+	    this.playlistRepository = playlistRepository;
+	    this.jamendoClient = jamendoClient;
 	}
 
 	// GET USER BY ID (CREAZIONE UTENTE NEL DATABASE) DA COMPLETARE!!
@@ -58,14 +80,18 @@ public class UserServiceImpl implements UserService {
 	// TRACCE FAVORITE USER
 	@Override
 	public List<TrackResponse> getUserFavorites(Long userId) {
-		return new ArrayList<>();
+
+	    User user = userRepository.findByIdWithFavorites(userId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+
+	    return user.getFavoriteTracks()
+	            .stream()
+	            .map(favorite ->
+	                    mapToTrackResponse(favorite.getTrack()))
+	            .toList();
 	}
 
-	// RIMUOVE I PREFERITI
-	@Override
-	public void removeFavorite(Long userId, Long trackId) {
-
-	}
 
 	// PLAYLIST USER
 	@Override
@@ -84,7 +110,8 @@ public class UserServiceImpl implements UserService {
 		User saved = userRepository.save(user);
 		return mapToResponse(saved);
 	}
-
+	
+	// PATCH USER
 	@Override
 	public UserResponse patchUser(Long id, PatchUserRequest request) {
 		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
@@ -109,11 +136,114 @@ public class UserServiceImpl implements UserService {
 		}
 		return mapToResponse(userRepository.save(user));
 	}
-
+    
+	// AGGIUNGE BRANO AI PREFERITI
 	@Override
 	public List<TrackResponse> addFavorite(Long userId, AddTrackRequest request) {
-		return null;
+
+	    if (request.getJamendoTrackId() == null) {
+	        throw new RuntimeException("jamendoTrackId is required");
+	    }
+
+	    User user = userRepository.findByIdWithFavorites(userId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+
+	    boolean alreadyExists = user.getFavoriteTracks()
+	            .stream()
+	            .anyMatch(f ->
+	                    f.getTrack()
+	                     .getJamendoTrackId()
+	                     .equals(request.getJamendoTrackId()));
+
+	    if (alreadyExists) {
+	        throw new RuntimeException("Track already in favorites");
+	    }
+
+	    Optional<Track> existingTrack =
+	            trackRepository.findByJamendoTrackId(
+	                    request.getJamendoTrackId());
+
+	    Track track;
+
+	    if (existingTrack.isPresent()) {
+
+	        track = existingTrack.get();
+
+	    } else {
+
+	        TrackSearchRequest searchRequest =
+	                new TrackSearchRequest();
+
+	        searchRequest.setQuery(
+	                request.getJamendoTrackId().toString());
+
+	        searchRequest.setLimit(1);
+
+	        JamendoSearchResponse response =
+	                jamendoClient.searchTracks(searchRequest);
+
+	        if (response == null ||
+	                response.getResults().isEmpty()) {
+
+	            throw new RuntimeException(
+	                    "Track not found on Jamendo");
+	        }
+
+	        JamendoTrackDto dto =
+	                response.getResults().get(0);
+	        
+	     // CREAZIONE TRACK
+
+	        track = new Track();
+
+	        track.setJamendoTrackId(dto.getId());
+
+	        track.setJamendoArtistId(dto.getArtistId());
+
+	        track.setJamendoAlbumId(dto.getAlbumId());
+
+	        track.setTitle(dto.getName());
+
+	        track.setArtistName(dto.getArtistName());
+
+	        track.setAlbumName(dto.getAlbumName());
+
+	        track.setDuration(dto.getDuration());
+
+	        track.setAudioUrl(dto.getAudioUrl());
+
+	        track.setCoverUrl(dto.getCoverUrl());
+
+	        track.setCreatedAt(LocalDateTime.now());
+
+	        track = trackRepository.save(track);
+	    }
+	    
+	 // CREAZIONE RELAZIONE USER - TRACK
+
+	    UserFavoriteTrack favorite =
+	            new UserFavoriteTrack();
+
+	    favorite.setUser(user);
+
+	    favorite.setTrack(track);
+
+	    favorite.setCreatedAt(LocalDateTime.now());
+
+	    user.getFavoriteTracks().add(favorite);
+
+	    User updatedUser =
+	            userRepository.save(user);
+
+	    return updatedUser.getFavoriteTracks()
+	            .stream()
+	            .map(f -> mapToTrackResponse(
+	                    f.getTrack()))
+	            .toList();
 	}
+	
+	// MAPPING USER RESPONSE
 
 	private UserResponse mapToResponse(User user) {
 		UserResponse res = new UserResponse();
@@ -123,6 +253,91 @@ public class UserServiceImpl implements UserService {
 		res.setLastName(user.getLastName());
 		res.setEmail(user.getEmail());
 		return res;
+	}
+	
+	// MAPPING TRACK RESPONSE
+	private TrackResponse mapToTrackResponse(Track track) {
+
+	    TrackResponse response =
+	            new TrackResponse();
+
+	    response.setId(track.getId());
+
+	    response.setJamendoTrackId(
+	            track.getJamendoTrackId());
+
+	    response.setTitle(track.getTitle());
+
+	    response.setArtist(
+	            track.getArtistName());
+
+	    response.setAlbum(
+	            track.getAlbumName());
+
+	    response.setGenres(
+	            track.getTrackGenres()
+	                    .stream()
+	                    .map(tg -> tg.getGenre().getName())
+	                    .toList()
+	    );
+
+	    response.setDuration(
+	            track.getDuration());
+
+	    response.setCoverImageUrl(
+	            track.getCoverUrl());
+
+	    response.setAudioUrl(
+	            track.getAudioUrl());
+
+	    response.setCreatedAt(
+	            track.getCreatedAt());
+
+	    return response;
+	}
+	// RIMUOVE BRANO DAI PREFERITI
+	@Override
+	public void removeFavorite(Long userId, Long trackId) {
+
+	    // RECUPERO USER
+	    User user = userRepository.findByIdWithFavorites(userId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+
+	    // CERCA RELAZIONE USER - TRACK
+	    UserFavoriteTrack favorite =
+	            user.getFavoriteTracks()
+	                    .stream()
+	                    .filter(f ->
+	                            f.getTrack()
+	                             .getId()
+	                             .equals(trackId))
+	                    .findFirst()
+	                    .orElseThrow(() ->
+	                            new ResourceNotFoundException(
+	                                    "Track not found in favorites"));
+
+	    // RIMOZIONE RELAZIONE
+	    user.getFavoriteTracks().remove(favorite);
+
+	    // SAVE USER
+	    userRepository.save(user);
+
+	    // TRACK USATA IN ALTRE PLAYLIST?
+	    boolean existsInPlaylists =
+	            playlistRepository
+	                    .existsByPlaylistTracks_Track_Id(trackId);
+
+	    // TRACK USATA IN ALTRI FAVORITES?
+	    boolean existsInFavorites =
+	            userRepository
+	                    .existsByFavoriteTracks_Track_Id(trackId);
+
+	    // ELIMINA TRACK ORFANA
+	    if (!existsInPlaylists && !existsInFavorites) {
+
+	        trackRepository.deleteById(trackId);
+	    }
 	}
 
 }

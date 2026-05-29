@@ -30,5 +30,5 @@ public interface UserService {
 	UserResponse patchUser(Long id, PatchUserRequest request);
 
 	List<TrackResponse> addFavorite(Long userId, AddTrackRequest request);
-
+	
 }
