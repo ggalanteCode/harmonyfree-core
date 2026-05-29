@@ -2,6 +2,7 @@ package com.generation153.harmonyfree.core.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,8 +25,12 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/tracks/**").permitAll() // esempio
-                        //TODO definire i permessi anche per tutte le altre chiamate
+                		//PERMESSI CHIAMATE Playlist
+                		
+                		//PERMESSI CHIAMATE Track
+                        .requestMatchers("/api/v1/tracks/**").permitAll()
+                        //PERMESSI CHIAMATE User
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

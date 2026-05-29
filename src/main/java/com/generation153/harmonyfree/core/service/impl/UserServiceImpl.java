@@ -3,6 +3,7 @@ package com.generation153.harmonyfree.core.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.generation153.harmonyfree.core.dto.AddTrackRequest;
@@ -15,7 +16,7 @@ import com.generation153.harmonyfree.core.dto.UserResponse;
 import com.generation153.harmonyfree.core.entity.User;
 import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.UserRepository;
-
+import com.generation153.harmonyfree.core.security.model.CustomUserPrincipal;
 import com.generation153.harmonyfree.core.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -102,13 +103,30 @@ public class UserServiceImpl implements UserService {
 	// CREAZIONE USER
 	@Override
 	public UserResponse createUser(CreateUserRequest request) {
+		
+		CustomUserPrincipal principal = (CustomUserPrincipal)
+			    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		//RECUPERA L'authUserId E L'email SEMPRE DAL TOKEN
+		Long authUserId = principal.getUserId();
+		String email = principal.getEmail();
+		
+		//VERIFICA SE L'UTENTE CON  QUELL'authUserId ESISTE GIA', IN TAL CASO 
+		//LANCIA UN'ECCEZIONE
+		if (userRepository.existsByAuthUserId(authUserId)) {
+		    throw new RuntimeException("User già esistente");
+		}
+		
 		User user = new User();
+		user.setAuthUserId(authUserId);
+		user.setEmail(email);
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
-		user.setEmail(request.getEmail());
+		
 		User saved = userRepository.save(user);
 		return mapToResponse(saved);
+		
 	}
 	
 	// PATCH USER
@@ -127,9 +145,6 @@ public class UserServiceImpl implements UserService {
 		}
 		if (request.getEmail() != null) {
 			user.setEmail(request.getEmail());
-		}
-		if (request.getDisplayName() != null) {
-			user.setDisplayName(request.getDisplayName());
 		}
 		if (request.getProfileImageUrl() != null) {
 			user.setProfileImageUrl(request.getProfileImageUrl());

@@ -4,15 +4,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.List;
 
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 @Service
 public class JwtService {
 	
-	@Value("")
+	@Value("${jwt.secret}")
 	private String secret; // stessa dell'auth
 
     private Key getSigningKey() {
@@ -43,6 +45,26 @@ public class JwtService {
 
         throw new RuntimeException("Claim id non valido");
         
+    }
+
+	public boolean isTokenValid(String token) {
+		try {
+            extractAllClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+	}
+
+	public List<String> extractRoles(String token) {
+		List<?> roles = extractAllClaims(token).get("roles", List.class);
+        return roles.stream()
+                .map(Object::toString)
+                .toList();
+	}
+	
+	public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
     }
 
 }
