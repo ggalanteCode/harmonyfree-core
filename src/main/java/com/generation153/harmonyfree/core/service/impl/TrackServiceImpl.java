@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
+import com.generation153.harmonyfree.core.entity.Genre;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.exception.BadRequestException;
 import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
@@ -17,6 +18,7 @@ import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
+import com.generation153.harmonyfree.core.repository.GenreRepository;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 import com.generation153.harmonyfree.core.service.TrackService;
 
@@ -28,10 +30,15 @@ public class TrackServiceImpl implements TrackService {
 	
 	private final TrackRepository trackRepository;
 	
+	private final GenreRepository genreRepository;
+	
 	private final JamendoClient jamendoClient;
 
-	public TrackServiceImpl(TrackRepository trackRepository, JamendoClient jamendoClient) {
+	public TrackServiceImpl(TrackRepository trackRepository, 
+			GenreRepository genreRepository, 
+			JamendoClient jamendoClient) {
 		this.trackRepository = trackRepository;
+		this.genreRepository = genreRepository;
 		this.jamendoClient = jamendoClient;
 	}
 
@@ -98,7 +105,6 @@ public class TrackServiceImpl implements TrackService {
 	    //se la traccia cercata esiste nel db
 	    if (existingTrack.isPresent()) {
 	    	log.info("getTrackById: track exists in db: " + existingTrack.get());
-	    	log.info("getTrackById: genres: " + existingTrack.get().getGenres());
 	    	//la mappiamo nella response e la restituiamo
 	        return mapToTrackResponse(existingTrack.get());
 	    }
@@ -130,6 +136,7 @@ public class TrackServiceImpl implements TrackService {
 	}
 	
 	private Track mapToEntity(JamendoTrackDto dto) {
+		
 		Track track = new Track();
 	    track.setJamendoTrackId(dto.getId());
 	    track.setJamendoArtistId(dto.getArtistId());
@@ -137,28 +144,51 @@ public class TrackServiceImpl implements TrackService {
 	    track.setTitle(dto.getName());
 	    track.setArtistName(dto.getArtistName());
 	    track.setAlbumName(dto.getAlbumName());
-	    track.setGenres(extractGenres(dto));
 	    track.setDuration(dto.getDuration());
 	    track.setAudioUrl(dto.getAudioUrl());
 	    track.setCoverUrl(dto.getCoverUrl());
 	    track.setCreatedAt(LocalDateTime.now());
+
+	    List<String> genreNames = extractGenres(dto);
+
+	    genreNames.forEach(name -> {
+	    	
+	    	//per non avere generi con nome uguale che distinguono tra maiuscole e minuscole
+	    	String normalizedName = name.trim().toLowerCase();
+	    	
+	        Genre genre = genreRepository.findByName(normalizedName)
+	            .orElseGet(() -> genreRepository.save(new Genre(normalizedName)));
+	        
+	        track.addGenre(genre);
+	        
+	    });
+
 	    return track;
+		
 	}
 
 	private TrackResponse mapToTrackResponse(Track track) {
+		
 		TrackResponse response = new TrackResponse(
 				track.getId(), 
 				track.getJamendoTrackId(), 
 				track.getTitle(), 
 				track.getArtistName(), 
 				track.getAlbumName(), 
-				track.getGenres() != null ? track.getGenres() : List.of(), 
+				
+				track.getTrackGenres()
+				.stream()
+			    .map(tg -> tg.getGenre().getName())
+			    .toList(), 
+			    
 				track.getDuration(), 
 				track.getCoverUrl(), 
 				track.getAudioUrl(), 
 				track.getCreatedAt()
 		);
+		
 	    return response;
+	    
 	}
 
 }
