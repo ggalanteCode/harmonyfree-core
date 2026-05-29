@@ -123,6 +123,8 @@ public class UserServiceImpl implements UserService {
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
+		user.setCreatedAt(LocalDateTime.now());
+		user.setProfileImageUrl(request.getProfileImageUrl());
 		
 		User saved = userRepository.save(user);
 		return mapToResponse(saved);
@@ -267,6 +269,7 @@ public class UserServiceImpl implements UserService {
 		res.setFirstName(user.getFirstName());
 		res.setLastName(user.getLastName());
 		res.setEmail(user.getEmail());
+		res.setProfileImageUrl(user.getProfileImageUrl());
 		return res;
 	}
 	
