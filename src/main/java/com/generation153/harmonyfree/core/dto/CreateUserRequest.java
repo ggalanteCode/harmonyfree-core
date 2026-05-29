@@ -5,6 +5,7 @@ public class CreateUserRequest {
 	private String username;
 	private String firstName;
 	private String lastName;
+	private String profileImageUrl;
 
 	public String getUsername() {
 		return username;
@@ -30,9 +31,18 @@ public class CreateUserRequest {
 		this.lastName = lastName;
 	}
 
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
 	@Override
 	public String toString() {
-		return "CreateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return "CreateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", profileImageUrl=" + profileImageUrl + "]";
 	}
 	
 }

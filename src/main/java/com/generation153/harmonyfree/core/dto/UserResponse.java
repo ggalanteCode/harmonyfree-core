@@ -6,7 +6,6 @@ public class UserResponse {
 	private String username;
 	private String firstName;
 	private String lastName;
-	private String displayName;
 	private String profileImageUrl;
 	private String email;
 
@@ -42,14 +41,6 @@ public class UserResponse {
 		this.lastName = lastName;
 	}
 
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
 	public String getProfileImageUrl() {
 		return profileImageUrl;
 	}
@@ -69,8 +60,7 @@ public class UserResponse {
 	@Override
 	public String toString() {
 		return "UserResponse [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", displayName=" + displayName + ", profileImageUrl=" + profileImageUrl + ", email="
-				+ email + "]";
+				+ lastName + ", profileImageUrl=" + profileImageUrl + ", email=" + email + "]";
 	}
 	
 }
