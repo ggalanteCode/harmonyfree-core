@@ -32,17 +32,22 @@ public class UserController {
 		this.userService = userService;
 
 	}
+	
+	//NON CI SONO CHIAMATE PUBBLICHE IN USERCONTROLLER
 
+	//Creazione profilo (una sola volta dopo il login)
+	//POSSONO FARLA SIA USER CHE ADMIN, NO PUBBLICA
 	@PostMapping
 	public UserResponse createUser(@RequestBody CreateUserRequest request) {
 		return userService.createUser(request);
 	}
-
-	@GetMapping("/{id}")
-	public UserResponse getUser(@PathVariable Long id) {
-		return userService.getUserById(id);
-
-	}
+	
+	//SEZIONE PROFILO UTENTE AUTENTICATO
+	
+	@GetMapping("/me")
+    public UserResponse getMe() {
+        return null;
+    }
 
 	@PutMapping("/{id}")
 	public UserResponse updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
@@ -53,11 +58,8 @@ public class UserController {
 	public UserResponse patchUser(@PathVariable Long id, @RequestBody PatchUserRequest request) {
 		return userService.patchUser(id, request);
 	}
-
-	@DeleteMapping("/{id}")
-	public void deleteUser(@PathVariable Long id) {
-		userService.deleteUser(id);
-	}
+	
+	//SEZIONE FAVORITES
 
 	@PostMapping("/{userId}/favorites")
 	public List<TrackResponse> addFavorite(@PathVariable Long userId, @RequestBody AddTrackRequest request) {
@@ -73,6 +75,8 @@ public class UserController {
 	public void removeFavorite(@PathVariable Long userId, @PathVariable Long trackId) {
 		userService.removeFavorite(userId, trackId);
 	}
+	
+	//SEZIONE PLAYLISTS DELL’UTENTE
 
 	@GetMapping("/{userId}/playlists")
 	public List<PlaylistResponse> getUserPlaylists(@PathVariable Long userId) {
@@ -80,5 +84,16 @@ public class UserController {
 
 	}
 	
+	//SEZIONE ADMIN ONLY (opzionale)
+	
+	@GetMapping("/{id}")
+	public UserResponse getUser(@PathVariable Long id) {
+		return userService.getUserById(id);
+	}
+	
+	@DeleteMapping("/{id}")
+	public void deleteUser(@PathVariable Long id) {
+		userService.deleteUser(id);
+	}
 
 }
