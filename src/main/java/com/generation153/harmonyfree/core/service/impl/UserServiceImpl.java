@@ -24,9 +24,12 @@ import java.util.Optional;
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
 import com.generation153.harmonyfree.core.dto.JamendoTrackDto;
+import com.generation153.harmonyfree.core.dto.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
+import com.generation153.harmonyfree.core.entity.Genre;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.entity.UserFavoriteTrack;
+import com.generation153.harmonyfree.core.repository.GenreRepository;
 import com.generation153.harmonyfree.core.repository.PlaylistRepository;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 
@@ -38,17 +41,20 @@ public class UserServiceImpl implements UserService {
 	public final TrackRepository trackRepository;
 	public final JamendoClient jamendoClient;
 	public final PlaylistRepository playlistRepository;
+	public final GenreRepository genreRepository;
 
 	public UserServiceImpl(
 	        UserRepository userRepository,
 	        TrackRepository trackRepository,
 	        PlaylistRepository playlistRepository,
-	        JamendoClient jamendoClient) {
+	        JamendoClient jamendoClient,
+	        GenreRepository genreRepository) {
 
 	    this.userRepository = userRepository;
 	    this.trackRepository = trackRepository;
 	    this.playlistRepository = playlistRepository;
 	    this.jamendoClient = jamendoClient;
+	    this.genreRepository = genreRepository;
 	}
 
 	// GET USER BY ID (CREAZIONE UTENTE NEL DATABASE) DA COMPLETARE!!
@@ -189,16 +195,7 @@ public class UserServiceImpl implements UserService {
 
 	    } else {
 
-	        TrackSearchRequest searchRequest =
-	                new TrackSearchRequest();
-
-	        searchRequest.setQuery(
-	                request.getJamendoTrackId().toString());
-
-	        searchRequest.setLimit(1);
-
-	        JamendoSearchResponse response =
-	                jamendoClient.searchTracks(searchRequest);
+	        JamendoTrackResponse response = jamendoClient.getTrackById(request.getJamendoTrackId());
 
 	        if (response == null ||
 	                response.getResults().isEmpty()) {
@@ -212,27 +209,7 @@ public class UserServiceImpl implements UserService {
 	        
 	     // CREAZIONE TRACK
 
-	        track = new Track();
-
-	        track.setJamendoTrackId(dto.getId());
-
-	        track.setJamendoArtistId(dto.getArtistId());
-
-	        track.setJamendoAlbumId(dto.getAlbumId());
-
-	        track.setTitle(dto.getName());
-
-	        track.setArtistName(dto.getArtistName());
-
-	        track.setAlbumName(dto.getAlbumName());
-
-	        track.setDuration(dto.getDuration());
-
-	        track.setAudioUrl(dto.getAudioUrl());
-
-	        track.setCoverUrl(dto.getCoverUrl());
-
-	        track.setCreatedAt(LocalDateTime.now());
+	        track = mapToTrackEntity(dto);
 
 	        track = trackRepository.save(track);
 	    }
@@ -260,6 +237,65 @@ public class UserServiceImpl implements UserService {
 	            .toList();
 	}
 	
+	private List<String> extractGenres(JamendoTrackDto dto) {
+		
+		if (hasNoGenres(dto)) {
+	        return List.of();
+	    }
+
+	    return dto.getMusicinfo().getTags().getGenres();
+	    
+	}
+	
+	private boolean hasNoGenres(JamendoTrackDto dto) {
+		return dto.getMusicinfo() == null 
+				|| dto.getMusicinfo().getTags() == null 
+				|| dto.getMusicinfo().getTags().getGenres() == null;
+	}
+	
+	//MAPPING TRACK
+	
+	private Track mapToTrackEntity(JamendoTrackDto dto) {
+		Track track = new Track();
+
+        track.setJamendoTrackId(dto.getId());
+
+        track.setJamendoArtistId(dto.getArtistId());
+
+        track.setJamendoAlbumId(dto.getAlbumId());
+
+        track.setTitle(dto.getName());
+
+        track.setArtistName(dto.getArtistName());
+
+        track.setAlbumName(dto.getAlbumName());
+
+        track.setDuration(dto.getDuration());
+
+        track.setAudioUrl(dto.getAudioUrl());
+
+        track.setCoverUrl(dto.getCoverUrl());
+
+        track.setCreatedAt(LocalDateTime.now());
+        
+        //ESTRAI I NOMI DEI GENERI
+        List<String> genreNames = extractGenres(dto);
+
+	    genreNames.forEach(name -> {
+	    	
+	    	//per non avere generi con nome uguale che distinguono tra maiuscole e minuscole
+	    	String normalizedName = name.trim().toLowerCase();
+	    	
+	        Genre genre = genreRepository.findByName(normalizedName)
+	            .orElseGet(() -> genreRepository.save(new Genre(normalizedName)));
+	        
+	        track.addGenre(genre);
+	        
+	    });
+	    
+	    return track;
+	}
+
 	// MAPPING USER RESPONSE
 
 	private UserResponse mapToResponse(User user) {
