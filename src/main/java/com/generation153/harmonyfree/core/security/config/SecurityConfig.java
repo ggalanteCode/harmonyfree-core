@@ -27,11 +27,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 		//PERMESSI CHIAMATE Playlist
                 		
+                		//PERMESSI CHIAMATE Stats
+                		
                 		//PERMESSI CHIAMATE Track
-                        .requestMatchers("/api/v1/tracks/**").permitAll()
+                		.requestMatchers(HttpMethod.GET, "/api/v1/tracks/**").permitAll()
                         //PERMESSI CHIAMATE User
+                        // TODO .requestMatchers("/api/v1/users/me", "/api/v1/users/me/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().permitAll()
+                        // TODO .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+
+                    .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
