@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	        if (jwtService.isTokenValid(token)) {
 
 	            // 👉 2. estrai dati dal token
-	            Long userId = jwtService.extractAuthUserId(token);
+	            Integer userId = jwtService.extractAuthUserId(token);
 	            String email = jwtService.extractEmail(token);
 	            List<String> roles = jwtService.extractRoles(token);
 

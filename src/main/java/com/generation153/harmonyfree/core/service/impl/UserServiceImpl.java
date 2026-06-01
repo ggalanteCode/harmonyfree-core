@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 			    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		//RECUPERA L'authUserId E L'email SEMPRE DAL TOKEN
-		Long authUserId = principal.getUserId();
+		Integer authUserId = principal.getUserId();
 		String email = principal.getEmail();
 		
 		//VERIFICA SE L'UTENTE CON  QUELL'authUserId ESISTE GIA', IN TAL CASO 

@@ -30,7 +30,7 @@ public class User {
     private Long id;
 
     @Column(name = "auth_user_id", nullable = false, unique = true)
-    private Long authUserId;
+    private Integer authUserId;
 
     @Column(nullable = false, unique = true, length = 50)
     private String username;
