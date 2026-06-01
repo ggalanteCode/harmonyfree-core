@@ -44,9 +44,6 @@ public class User {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

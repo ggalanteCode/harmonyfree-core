@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
-		user.setEmail(request.getEmail());
+		//user.setEmail(request.getEmail());
 		User saved = userRepository.save(user);
 
 		return mapToResponse(saved);
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
 		
 		User user = new User();
 		user.setAuthUserId(authUserId);
-		user.setEmail(email);
+		//user.setEmail(email);
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
 			user.setLastName(request.getLastName());
 		}
 		if (request.getEmail() != null) {
-			user.setEmail(request.getEmail());
+			//user.setEmail(request.getEmail());
 		}
 		if (request.getProfileImageUrl() != null) {
 			user.setProfileImageUrl(request.getProfileImageUrl());
@@ -304,7 +304,7 @@ public class UserServiceImpl implements UserService {
 		res.setUsername(user.getUsername());
 		res.setFirstName(user.getFirstName());
 		res.setLastName(user.getLastName());
-		res.setEmail(user.getEmail());
+		//res.setEmail(user.getEmail());
 		res.setProfileImageUrl(user.getProfileImageUrl());
 		return res;
 	}
