@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.generation153.harmonyfree.core.dto.TrackSearchResponse;
-import com.generation153.harmonyfree.core.dto.TrackResponse;
-import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
+import com.generation153.harmonyfree.core.dto.track.TrackResponse;
+import com.generation153.harmonyfree.core.dto.track.TrackSearchRequest;
+import com.generation153.harmonyfree.core.dto.track.TrackSearchResponse;
 import com.generation153.harmonyfree.core.service.TrackService;
 
 import jakarta.validation.Valid;

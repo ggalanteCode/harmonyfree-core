@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.generation153.harmonyfree.core.dto.TrackStatsResponse;
+import com.generation153.harmonyfree.core.dto.stats.TrackStatsResponse;
 import com.generation153.harmonyfree.core.service.StatsService;
 
 @RestController

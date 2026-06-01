@@ -2,11 +2,11 @@ package com.generation153.harmonyfree.core.service;
 
 import java.util.List;
 
-import com.generation153.harmonyfree.core.dto.AddTrackRequest;
-import com.generation153.harmonyfree.core.dto.CreatePlaylistRequest;
-import com.generation153.harmonyfree.core.dto.PlaylistResponse;
-import com.generation153.harmonyfree.core.dto.TrackResponse;
-import com.generation153.harmonyfree.core.dto.UpdatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.playlist.CreatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
+import com.generation153.harmonyfree.core.dto.playlist.UpdatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
+import com.generation153.harmonyfree.core.dto.track.TrackResponse;
 
 public interface PlaylistService {
 

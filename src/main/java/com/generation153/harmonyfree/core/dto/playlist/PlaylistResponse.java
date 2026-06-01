@@ -1,7 +1,9 @@
-package com.generation153.harmonyfree.core.dto;
+package com.generation153.harmonyfree.core.dto.playlist;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.generation153.harmonyfree.core.dto.track.TrackResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

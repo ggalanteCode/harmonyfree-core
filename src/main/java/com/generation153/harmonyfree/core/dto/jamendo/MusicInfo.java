@@ -1,4 +1,4 @@
-package com.generation153.harmonyfree.core.dto;
+package com.generation153.harmonyfree.core.dto.jamendo;
 
 import lombok.Getter;
 import lombok.Setter;

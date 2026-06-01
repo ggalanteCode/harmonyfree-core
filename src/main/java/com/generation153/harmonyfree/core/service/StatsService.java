@@ -2,7 +2,7 @@ package com.generation153.harmonyfree.core.service;
 
 import java.util.List;
 
-import com.generation153.harmonyfree.core.dto.TrackStatsResponse;
+import com.generation153.harmonyfree.core.dto.stats.TrackStatsResponse;
 
 public interface StatsService {
 
