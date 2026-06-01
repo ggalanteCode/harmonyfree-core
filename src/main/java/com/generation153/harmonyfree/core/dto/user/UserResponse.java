@@ -7,7 +7,6 @@ public class UserResponse {
 	private String firstName;
 	private String lastName;
 	private String profileImageUrl;
-	private String email;
 
 	public Long getId() {
 		return id;
@@ -47,14 +46,6 @@ public class UserResponse {
 
 	public void setProfileImageUrl(String profileImageUrl) {
 		this.profileImageUrl = profileImageUrl;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	@Override
