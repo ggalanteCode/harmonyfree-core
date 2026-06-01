@@ -1,4 +1,4 @@
-package com.generation153.harmonyfree.core.dto;
+package com.generation153.harmonyfree.core.dto.track;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

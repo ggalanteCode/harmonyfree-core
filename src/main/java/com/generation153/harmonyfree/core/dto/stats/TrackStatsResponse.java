@@ -1,4 +1,4 @@
-package com.generation153.harmonyfree.core.dto;
+package com.generation153.harmonyfree.core.dto.stats;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

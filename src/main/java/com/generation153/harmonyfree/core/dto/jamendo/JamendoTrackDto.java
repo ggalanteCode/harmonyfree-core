@@ -1,4 +1,4 @@
-package com.generation153.harmonyfree.core.dto;
+package com.generation153.harmonyfree.core.dto.jamendo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

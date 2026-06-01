@@ -1,7 +1,5 @@
 
 package com.generation153.harmonyfree.core.controller;
-import com.generation153.harmonyfree.core.dto.UpdateUserRequest;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.generation153.harmonyfree.core.dto.AddTrackRequest;
-import com.generation153.harmonyfree.core.dto.CreateUserRequest;
-import com.generation153.harmonyfree.core.dto.PatchUserRequest;
-import com.generation153.harmonyfree.core.dto.PlaylistResponse;
-import com.generation153.harmonyfree.core.dto.TrackResponse;
-import com.generation153.harmonyfree.core.dto.UserResponse;
+import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
+import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
+import com.generation153.harmonyfree.core.dto.track.TrackResponse;
+import com.generation153.harmonyfree.core.dto.user.CreateUserRequest;
+import com.generation153.harmonyfree.core.dto.user.PatchUserRequest;
+import com.generation153.harmonyfree.core.dto.user.UpdateUserRequest;
+import com.generation153.harmonyfree.core.dto.user.UserResponse;
 import com.generation153.harmonyfree.core.service.UserService;
 
 @RestController

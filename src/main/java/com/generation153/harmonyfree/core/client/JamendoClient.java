@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.generation153.harmonyfree.core.config.JamendoProperties;
-import com.generation153.harmonyfree.core.dto.JamendoSearchResponse;
-import com.generation153.harmonyfree.core.dto.JamendoTrackResponse;
-import com.generation153.harmonyfree.core.dto.TrackSearchRequest;
+import com.generation153.harmonyfree.core.dto.jamendo.JamendoSearchResponse;
+import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackResponse;
+import com.generation153.harmonyfree.core.dto.track.TrackSearchRequest;
 
 import lombok.extern.slf4j.Slf4j;
 

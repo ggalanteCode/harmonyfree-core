@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.generation153.harmonyfree.core.dto.TrackStatsResponse;
+import com.generation153.harmonyfree.core.dto.stats.TrackStatsResponse;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.exception.BadRequestException;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
