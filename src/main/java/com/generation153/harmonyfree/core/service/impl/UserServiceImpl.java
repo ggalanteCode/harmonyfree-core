@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService {
 	    this.genreRepository = genreRepository;
 	}
 
-	// GET USER BY ID (CREAZIONE UTENTE NEL DATABASE) DA COMPLETARE!!
 	@Override
 	public UserResponse getUserById(Long id) {
 		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
