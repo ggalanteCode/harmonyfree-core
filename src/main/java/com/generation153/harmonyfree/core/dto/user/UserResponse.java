@@ -51,7 +51,7 @@ public class UserResponse {
 	@Override
 	public String toString() {
 		return "UserResponse [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", profileImageUrl=" + profileImageUrl + ", email=" + email + "]";
+				+ lastName + ", profileImageUrl=" + profileImageUrl + "]";
 	}
 	
 }
