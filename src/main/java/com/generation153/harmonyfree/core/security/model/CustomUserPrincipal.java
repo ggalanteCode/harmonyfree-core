@@ -2,15 +2,15 @@ package com.generation153.harmonyfree.core.security.model;
 
 public class CustomUserPrincipal {
 	
-	private final Long userId;
+	private final Integer userId;
     private final String email;
 
-    public CustomUserPrincipal(Long userId, String email) {
+    public CustomUserPrincipal(Integer userId, String email) {
         this.userId = userId;
         this.email = email;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 

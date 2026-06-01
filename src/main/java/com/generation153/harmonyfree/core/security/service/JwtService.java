@@ -29,18 +29,18 @@ public class JwtService {
                 .getPayload();
     }
 
-    public Long extractAuthUserId(String token) {
+    public Integer extractAuthUserId(String token) {
     	
         Object idClaim = extractAllClaims(token).get("id");
         
         if (idClaim instanceof Integer value) {
-            return value.longValue();
-        }
-        if (idClaim instanceof Long value) {
             return value;
         }
+        if (idClaim instanceof Long value) {
+            return value.intValue();
+        }
         if (idClaim instanceof String value) {
-            return Long.parseLong(value);
+            return Integer.parseInt(value);
         }
 
         throw new RuntimeException("Claim id non valido");
