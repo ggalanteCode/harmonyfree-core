@@ -7,7 +7,6 @@ public class UserResponse {
 	private String firstName;
 	private String lastName;
 	private String profileImageUrl;
-	private String email;
 
 	public Long getId() {
 		return id;
@@ -49,18 +48,10 @@ public class UserResponse {
 		this.profileImageUrl = profileImageUrl;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	@Override
 	public String toString() {
 		return "UserResponse [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", profileImageUrl=" + profileImageUrl + ", email=" + email + "]";
+				+ lastName + ", profileImageUrl=" + profileImageUrl + "]";
 	}
 	
 }

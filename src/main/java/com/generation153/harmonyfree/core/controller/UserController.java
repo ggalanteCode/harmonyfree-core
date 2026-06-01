@@ -48,50 +48,55 @@ public class UserController {
         return null;
     }
 
-	@PutMapping("/{id}")
-	public UserResponse updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
-		return userService.updateUser(id, request);
+	@PutMapping("/me")
+	public UserResponse updateMe(@RequestBody UpdateUserRequest request) {
+		return null;
 	}
 
-	@PatchMapping("/{id}")
-	public UserResponse patchUser(@PathVariable Long id, @RequestBody PatchUserRequest request) {
-		return userService.patchUser(id, request);
+	@PatchMapping("/me")
+	public UserResponse patchMe(@RequestBody PatchUserRequest request) {
+		return null;
 	}
+	
+	@DeleteMapping("/me")
+    public void deleteMe() {
+		
+    }
 	
 	//SEZIONE FAVORITES
 
-	@PostMapping("/{userId}/favorites")
-	public List<TrackResponse> addFavorite(@PathVariable Long userId, @RequestBody AddTrackRequest request) {
-		return userService.addFavorite(userId, request);
+	@PostMapping("/me/favorites")
+	public List<TrackResponse> addFavorite(@RequestBody AddTrackRequest request) {
+		return null;
 	}
 
-	@GetMapping("/{userId}/favorites")
-	public List<TrackResponse> getFavorites(@PathVariable Long userId) {
-		return userService.getUserFavorites(userId);
+	@GetMapping("/me/favorites")
+	public List<TrackResponse> getFavorites() {
+		return null;
 	}
 
-	@DeleteMapping("/{userId}/favorites/{trackId}")
-	public void removeFavorite(@PathVariable Long userId, @PathVariable Long trackId) {
-		userService.removeFavorite(userId, trackId);
+	@DeleteMapping("/me/favorites/{trackId}")
+	public void removeFavorite(@PathVariable Long trackId) {
+		
 	}
 	
 	//SEZIONE PLAYLISTS DELL’UTENTE
 
-	@GetMapping("/{userId}/playlists")
-	public List<PlaylistResponse> getUserPlaylists(@PathVariable Long userId) {
-		return userService.getUserPlaylists(userId);
+	@GetMapping("/me/playlists")
+	public List<PlaylistResponse> getUserPlaylists() {
+		return null;
 
 	}
 	
 	//SEZIONE ADMIN ONLY (opzionale)
 	
 	@GetMapping("/{id}")
-	public UserResponse getUser(@PathVariable Long id) {
+	public UserResponse getUserById(@PathVariable Long id) {
 		return userService.getUserById(id);
 	}
 	
 	@DeleteMapping("/{id}")
-	public void deleteUser(@PathVariable Long id) {
+	public void deleteUserById(@PathVariable Long id) {
 		userService.deleteUser(id);
 	}
 
