@@ -6,13 +6,11 @@ import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.generation153.harmonyfree.core.dto.jamendo.JamendoSearchResponse;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
-import com.generation153.harmonyfree.core.dto.track.TrackSearchRequest;
 import com.generation153.harmonyfree.core.dto.user.CreateUserRequest;
 import com.generation153.harmonyfree.core.dto.user.PatchUserRequest;
 import com.generation153.harmonyfree.core.dto.user.UpdateUserRequest;
@@ -71,7 +69,6 @@ public class UserServiceImpl implements UserService {
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
-		//user.setEmail(request.getEmail());
 		User saved = userRepository.save(user);
 
 		return mapToResponse(saved);
@@ -115,7 +112,6 @@ public class UserServiceImpl implements UserService {
 		
 		//RECUPERA L'authUserId E L'email SEMPRE DAL TOKEN
 		Integer authUserId = principal.getUserId();
-		String email = principal.getEmail();
 		
 		//VERIFICA SE L'UTENTE CON  QUELL'authUserId ESISTE GIA', IN TAL CASO 
 		//LANCIA UN'ECCEZIONE
@@ -125,7 +121,6 @@ public class UserServiceImpl implements UserService {
 		
 		User user = new User();
 		user.setAuthUserId(authUserId);
-		//user.setEmail(email);
 		user.setUsername(request.getUsername());
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
@@ -150,9 +145,6 @@ public class UserServiceImpl implements UserService {
 		}
 		if (request.getLastName() != null) {
 			user.setLastName(request.getLastName());
-		}
-		if (request.getEmail() != null) {
-			//user.setEmail(request.getEmail());
 		}
 		if (request.getProfileImageUrl() != null) {
 			user.setProfileImageUrl(request.getProfileImageUrl());
@@ -304,7 +296,6 @@ public class UserServiceImpl implements UserService {
 		res.setUsername(user.getUsername());
 		res.setFirstName(user.getFirstName());
 		res.setLastName(user.getLastName());
-		//res.setEmail(user.getEmail());
 		res.setProfileImageUrl(user.getProfileImageUrl());
 		return res;
 	}

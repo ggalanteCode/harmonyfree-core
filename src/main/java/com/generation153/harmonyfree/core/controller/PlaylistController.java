@@ -9,7 +9,6 @@ import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.playlist.UpdatePlaylistRequest;
 import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
-import com.generation153.harmonyfree.core.dto.track.TrackSearchResponse;
 import com.generation153.harmonyfree.core.service.PlaylistService;
 
 
