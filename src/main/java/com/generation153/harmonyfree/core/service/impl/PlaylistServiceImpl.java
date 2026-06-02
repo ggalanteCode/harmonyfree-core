@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoSearchResponse;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackDto;
+import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackResponse;
 import com.generation153.harmonyfree.core.dto.playlist.CreatePlaylistRequest;
 import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.playlist.UpdatePlaylistRequest;
@@ -23,6 +25,7 @@ import com.generation153.harmonyfree.core.entity.User;
 import com.generation153.harmonyfree.core.repository.PlaylistRepository;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 import com.generation153.harmonyfree.core.repository.UserRepository;
+import com.generation153.harmonyfree.core.security.model.CustomUserPrincipal;
 import com.generation153.harmonyfree.core.service.PlaylistService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,25 +41,21 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final TrackRepository trackRepository;
 
     private final JamendoClient jamendoClient;
-
-   
+    
     // POST - CREATE PLAYLIST
     
-
     @Override
     public PlaylistResponse createPlaylist(CreatePlaylistRequest request) {
 
-        // VALIDAZIONE
-        if (request.getUserId() == null) {
-            throw new RuntimeException("UserId is required");
-        }
+    	CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
 
         if (request.getTitle() == null || request.getTitle().isBlank()) {
             throw new RuntimeException("Title is required");
         }
 
         // RECUPERO UTENTE
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findByAuthUserId(authUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // CREAZIONE PLAYLIST
@@ -67,6 +66,8 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlist.setTitle(request.getTitle());
 
         playlist.setDescription(request.getDescription());
+        
+        playlist.setIsPublic(request.getIsPublic());
 
         playlist.setCreatedAt(LocalDateTime.now());
 
@@ -94,12 +95,30 @@ public class PlaylistServiceImpl implements PlaylistService {
         return mapToPlaylistResponseWithTracks(playlist);
     }
 
+    @Override
+    public List<PlaylistResponse> getMyPlaylists() {
+    	
+    	CustomUserPrincipal customUserPrincipal = getCustomUserPrincipal();
+    	Integer authUserId = customUserPrincipal.getUserId();
+    	
+    	User userWithPlaylists = userRepository.findByAuthUserIdWithPlaylists(authUserId)
+    			.orElseThrow(() -> new RuntimeException("User not found"));
+    	
+    	List<Playlist> myPlaylists = userWithPlaylists.getPlaylists();
+    	
+    	return myPlaylists
+    			.stream()
+    			.map(playlist -> mapToPlaylistResponse(playlist))
+    			.toList();
+    }
     
     // PUT - UPDATE PLAYLIST
     
 
     @Override
     public PlaylistResponse updatePlaylist(Long id, UpdatePlaylistRequest request) {
+    	
+    	//VERIFICA CHE 
 
         // VALIDAZIONE
         if (request.getTitle() == null || request.getTitle().isBlank()) {
@@ -236,18 +255,9 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         } else {
 
-            
             // TRACK NON PRESENTE → JAMENDO
-            
 
-            TrackSearchRequest searchRequest = new TrackSearchRequest();
-
-            searchRequest.setQuery(request.getJamendoTrackId().toString());
-
-            searchRequest.setLimit(1);
-
-            JamendoSearchResponse response =
-                    jamendoClient.searchTracks(searchRequest);
+            JamendoTrackResponse response = jamendoClient.getTrackById(request.getJamendoTrackId());
 
             // TRACK NON TROVATA
             if (response == null || response.getResults().isEmpty()) {
@@ -318,6 +328,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 playlist.getId(),
                 playlist.getTitle(),
                 playlist.getDescription(),
+                playlist.getIsPublic(),
                 playlist.getCreatedAt(),
                 List.of()
         );
@@ -372,6 +383,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 playlist.getId(),
                 playlist.getTitle(),
                 playlist.getDescription(),
+                playlist.getIsPublic(),
                 playlist.getCreatedAt(),
                 tracks
         );
@@ -417,4 +429,9 @@ public class PlaylistServiceImpl implements PlaylistService {
          trackRepository.deleteById(trackId);
      }
  }
+ 
+ private CustomUserPrincipal getCustomUserPrincipal() {
+	return (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+ }
+ 
 }

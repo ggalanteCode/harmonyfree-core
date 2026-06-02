@@ -27,6 +27,8 @@ public class TrackController {
         this.trackService = trackService;
     }
     
+    //LE CHIAMATE DEL TrackController SONO TUTTE PUBBLICHE
+    
     @GetMapping
     public List<TrackSearchResponse> getTracks(@Valid @ModelAttribute TrackSearchRequest request) {
     	log.info("request: " + request);

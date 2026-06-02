@@ -13,6 +13,8 @@ public interface PlaylistService {
     PlaylistResponse createPlaylist(CreatePlaylistRequest request);
 
     PlaylistResponse getPlaylistById(Long id);
+    
+    List<PlaylistResponse> getMyPlaylists();
 
 	PlaylistResponse updatePlaylist(Long id, UpdatePlaylistRequest request);
 

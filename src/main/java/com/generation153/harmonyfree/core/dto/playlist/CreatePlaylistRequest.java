@@ -9,7 +9,8 @@ import lombok.ToString;
 @ToString
 public class CreatePlaylistRequest {
 
-    private Long userId;
     private String title;
     private String description;
+    private Boolean isPublic;
+    
 }
