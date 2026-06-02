@@ -19,10 +19,11 @@ public class StatsController {
 	public StatsController(StatsService statsService) {
 		this.statsService = statsService;
 	}
+	
+	//LE CHIAMATE DELLO StatsController SONO TUTTE PUBBLICHE
 
 	// TRACK PIU USATE
 	// API: GET http://localhost:8080/api/v1/stats/tracks/most-played
-
 	@GetMapping("/tracks/most-played")
 	public List<TrackStatsResponse> getMostPlayedTracks(@RequestParam(defaultValue = "10") int limit) {
 
