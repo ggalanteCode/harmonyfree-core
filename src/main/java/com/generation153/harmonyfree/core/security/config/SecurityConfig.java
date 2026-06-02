@@ -26,17 +26,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                 		//PERMESSI CHIAMATE Playlist
-                		
+                		.requestMatchers("/api/v1/playlists/**").hasRole("USER")
                 		//PERMESSI CHIAMATE Stats
-                		
+                		.requestMatchers(HttpMethod.GET, "/api/v1/stats/**").permitAll()
                 		//PERMESSI CHIAMATE Track
                 		.requestMatchers(HttpMethod.GET, "/api/v1/tracks/**").permitAll()
                         //PERMESSI CHIAMATE User
-                        // TODO .requestMatchers("/api/v1/users/me", "/api/v1/users/me/**").hasRole("USER")
+                        .requestMatchers("/api/v1/users/me", "/api/v1/users/me/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("USER", "ADMIN")
-                        // TODO .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
 
-                    .anyRequest().permitAll()
+                    .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

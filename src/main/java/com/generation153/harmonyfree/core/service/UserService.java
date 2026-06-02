@@ -11,23 +11,27 @@ import com.generation153.harmonyfree.core.dto.user.UpdateUserRequest;
 import com.generation153.harmonyfree.core.dto.user.UserResponse;
 
 public interface UserService {
-
-	UserResponse getUserById(Long id);
-
-	UserResponse updateUser(Long id, UpdateUserRequest request);
-
-	void deleteUser(Long id);
-
-	List<TrackResponse> getUserFavorites(Long userId);
-
-	void removeFavorite(Long userId, Long trackId);
-
-	List<PlaylistResponse> getUserPlaylists(Long userId);
-
+	
 	UserResponse createUser(CreateUserRequest request);
+	
+	UserResponse getCurrentUser();
+	
+	UserResponse updateCurrentUser(UpdateUserRequest request);
+	
+	UserResponse patchCurrentUser(PatchUserRequest request);
+	
+	void deleteCurrentUser();
+	
+	List<TrackResponse> addFavoriteToCurrentUser(AddTrackRequest request);
 
-	UserResponse patchUser(Long id, PatchUserRequest request);
+	List<TrackResponse> getCurrentUserFavorites();
 
-	List<TrackResponse> addFavorite(Long userId, AddTrackRequest request);
+	void removeFavoriteFromCurrentUser(Long trackId);
+
+	List<PlaylistResponse> getCurrentUserPlaylists();
+	
+	UserResponse getUserById(Long id);
+	
+	void deleteUser(Long id);
 	
 }

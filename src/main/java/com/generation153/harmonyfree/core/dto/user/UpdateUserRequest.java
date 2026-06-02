@@ -5,7 +5,7 @@ public class UpdateUserRequest {
 	private String username;
     private String firstName;
     private String lastName;
-    private String email;
+    private String profileImageUrl;
 
     public String getUsername() {
         return username;
@@ -31,11 +31,18 @@ public class UpdateUserRequest {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	@Override
+	public String toString() {
+		return "UpdateUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", profileImageUrl=" + profileImageUrl + "]";
+	}
+    
 }

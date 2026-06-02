@@ -20,11 +20,15 @@ import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.UserRepository;
 import com.generation153.harmonyfree.core.security.model.CustomUserPrincipal;
 import com.generation153.harmonyfree.core.service.UserService;
+
+import jakarta.transaction.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.entity.Genre;
+import com.generation153.harmonyfree.core.entity.Playlist;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.entity.UserFavoriteTrack;
 import com.generation153.harmonyfree.core.repository.GenreRepository;
@@ -54,62 +58,13 @@ public class UserServiceImpl implements UserService {
 	    this.jamendoClient = jamendoClient;
 	    this.genreRepository = genreRepository;
 	}
-
-	@Override
-	public UserResponse getUserById(Long id) {
-		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
-
-		return mapToResponse(user);
-	}
-
-	@Override
-	public UserResponse updateUser(Long id, UpdateUserRequest request) {
-		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
-		user.setUsername(request.getUsername());
-		user.setFirstName(request.getFirstName());
-		user.setLastName(request.getLastName());
-		User saved = userRepository.save(user);
-
-		return mapToResponse(saved);
-
-	}
-
-	// CANCELLA USER
-	@Override
-	public void deleteUser(Long id) {
-		userRepository.deleteById(id);
-	}
-
-	// TRACCE FAVORITE USER
-	@Override
-	public List<TrackResponse> getUserFavorites(Long userId) {
-
-	    User user = userRepository.findByIdWithFavorites(userId)
-	            .orElseThrow(() ->
-	                    new ResourceNotFoundException("User not found"));
-
-	    return user.getFavoriteTracks()
-	            .stream()
-	            .map(favorite ->
-	                    mapToTrackResponse(favorite.getTrack()))
-	            .toList();
-	}
-
-
-	// PLAYLIST USER
-	@Override
-	public List<PlaylistResponse> getUserPlaylists(Long userId) {
-		return new ArrayList<>();
-	}
-
+	
 	// CREAZIONE USER
 	@Override
 	public UserResponse createUser(CreateUserRequest request) {
 		
-		CustomUserPrincipal principal = (CustomUserPrincipal)
-			    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		//RECUPERA L'authUserId E L'email SEMPRE DAL TOKEN
+		//RECUPERA L'authUserId SEMPRE DAL TOKEN
+		CustomUserPrincipal principal = getCustomUserPrincipal();
 		Integer authUserId = principal.getUserId();
 		
 		//VERIFICA SE L'UTENTE CON  QUELL'authUserId ESISTE GIA', IN TAL CASO 
@@ -127,39 +82,95 @@ public class UserServiceImpl implements UserService {
 		user.setProfileImageUrl(request.getProfileImageUrl());
 		
 		User saved = userRepository.save(user);
-		return mapToResponse(saved);
 		
+		return mapToUserResponse(saved);
+		
+	}
+	
+	@Override
+	public UserResponse getCurrentUser() {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		User userByAuthUserId = userRepository.findByAuthUserId(authUserId)
+				.orElseThrow(() -> new ResourceNotFoundException("User corrente non trovato"));
+		
+		return mapToUserResponse(userByAuthUserId);
+	}
+	
+	@Override
+	public UserResponse updateCurrentUser(UpdateUserRequest request) {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		User userByAuthUserId = userRepository.findByAuthUserId(authUserId)
+				.orElseThrow(() -> new ResourceNotFoundException("User corrente non trovato"));
+		
+		userByAuthUserId.setUsername(request.getUsername());
+		userByAuthUserId.setFirstName(request.getFirstName());
+		userByAuthUserId.setLastName(request.getLastName());
+		userByAuthUserId.setProfileImageUrl(request.getProfileImageUrl());
+		userByAuthUserId.setUpdatedAt(LocalDateTime.now());
+		
+		User saved = userRepository.save(userByAuthUserId);
+
+		return mapToUserResponse(saved);
+
 	}
 	
 	// PATCH USER
 	@Override
-	public UserResponse patchUser(Long id, PatchUserRequest request) {
-		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
+	public UserResponse patchCurrentUser(PatchUserRequest request) {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		User userByAuthUserId = userRepository.findByAuthUserId(authUserId)
+				.orElseThrow(() -> new ResourceNotFoundException("User corrente non trovato"));
 
 		if (request.getUsername() != null) {
-			user.setUsername(request.getUsername());
+			userByAuthUserId.setUsername(request.getUsername());
 		}
 		if (request.getFirstName() != null) {
-			user.setFirstName(request.getFirstName());
+			userByAuthUserId.setFirstName(request.getFirstName());
 		}
 		if (request.getLastName() != null) {
-			user.setLastName(request.getLastName());
+			userByAuthUserId.setLastName(request.getLastName());
 		}
 		if (request.getProfileImageUrl() != null) {
-			user.setProfileImageUrl(request.getProfileImageUrl());
+			userByAuthUserId.setProfileImageUrl(request.getProfileImageUrl());
 		}
-		return mapToResponse(userRepository.save(user));
+		
+		userByAuthUserId.setUpdatedAt(LocalDateTime.now());
+		
+		return mapToUserResponse(userRepository.save(userByAuthUserId));
 	}
-    
+	
+	@Override
+	@Transactional
+	public void deleteCurrentUser() {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		userRepository.deleteByAuthUserId(authUserId);
+		
+	}
+	
 	// AGGIUNGE BRANO AI PREFERITI
 	@Override
-	public List<TrackResponse> addFavorite(Long userId, AddTrackRequest request) {
+	public List<TrackResponse> addFavoriteToCurrentUser(AddTrackRequest request) {
 
 	    if (request.getJamendoTrackId() == null) {
 	        throw new RuntimeException("jamendoTrackId is required");
 	    }
+	    
+	    CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
 
-	    User user = userRepository.findByIdWithFavorites(userId)
+	    User user = userRepository.findByAuthUserIdWithFavorites(authUserId)
 	            .orElseThrow(() ->
 	                    new ResourceNotFoundException("User not found"));
 
@@ -227,6 +238,114 @@ public class UserServiceImpl implements UserService {
 	                    f.getTrack()))
 	            .toList();
 	}
+
+	// TRACCE FAVORITE USER
+	@Override
+	public List<TrackResponse> getCurrentUserFavorites() {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+
+	    User user = userRepository.findByAuthUserIdWithFavorites(authUserId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+
+	    return user.getFavoriteTracks()
+	            .stream()
+	            .map(favorite ->
+	                    mapToTrackResponse(favorite.getTrack()))
+	            .toList();
+	}
+
+	// RIMUOVE BRANO DAI PREFERITI
+	@Override
+	public void removeFavoriteFromCurrentUser(Long trackId) {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+
+	    // RECUPERO USER
+	    User user = userRepository.findByAuthUserIdWithFavorites(authUserId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+
+	    // CERCA RELAZIONE USER - TRACK
+	    UserFavoriteTrack favorite =
+	            user.getFavoriteTracks()
+	                    .stream()
+	                    .filter(f ->
+	                            f.getTrack()
+	                             .getId()
+	                             .equals(trackId))
+	                    .findFirst()
+	                    .orElseThrow(() ->
+	                            new ResourceNotFoundException(
+	                                    "Track not found in favorites"));
+
+	    // RIMOZIONE RELAZIONE
+	    user.getFavoriteTracks().remove(favorite);
+
+	    // SAVE USER
+	    userRepository.save(user);
+
+	    // TRACK USATA IN ALTRE PLAYLIST?
+	    boolean existsInPlaylists =
+	            playlistRepository
+	                    .existsByPlaylistTracks_Track_Id(trackId);
+
+	    // TRACK USATA IN ALTRI FAVORITES?
+	    boolean existsInFavorites =
+	            userRepository
+	                    .existsByFavoriteTracks_Track_Id(trackId);
+
+	    // ELIMINA TRACK ORFANA
+	    if (!existsInPlaylists && !existsInFavorites) {
+
+	        trackRepository.deleteById(trackId);
+	    }
+	}
+
+	// PLAYLIST USER
+	@Override
+	public List<PlaylistResponse> getCurrentUserPlaylists() {
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		User user = userRepository.findByAuthUserIdWithPlaylists(authUserId)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("User not found"));
+		
+		return user.getPlaylists()
+	            .stream()
+	            //RESTITUIAMO SOLO I METADATI DELLE PLAYLIST, SENZA LE LORO TRACKS
+	            .map(playlist -> mapToPlaylistResponseWithoutItsTracks(playlist))
+	            .toList();
+	}
+	
+	private PlaylistResponse mapToPlaylistResponseWithoutItsTracks(Playlist playlist) {
+		PlaylistResponse playlistResponse = new PlaylistResponse();
+		playlistResponse.setId(playlist.getId());
+		playlistResponse.setTitle(playlist.getTitle());
+		playlistResponse.setDescription(playlist.getDescription());
+		playlistResponse.setIsPublic(playlist.getIsPublic());
+		playlistResponse.setCreatedAt(playlist.getCreatedAt());
+		playlistResponse.setTracks(new ArrayList<>());
+		return playlistResponse;
+	}
+
+	@Override
+	public UserResponse getUserById(Long id) {
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User non trovato"));
+		return mapToUserResponse(user);
+		
+	}
+
+	// CANCELLA USER
+	@Override
+	public void deleteUser(Long id) {
+		userRepository.deleteById(id);
+	}
 	
 	private List<String> extractGenres(JamendoTrackDto dto) {
 		
@@ -289,7 +408,7 @@ public class UserServiceImpl implements UserService {
 
 	// MAPPING USER RESPONSE
 
-	private UserResponse mapToResponse(User user) {
+	private UserResponse mapToUserResponse(User user) {
 		UserResponse res = new UserResponse();
 		res.setId(user.getId());
 		res.setUsername(user.getUsername());
@@ -339,49 +458,9 @@ public class UserServiceImpl implements UserService {
 
 	    return response;
 	}
-	// RIMUOVE BRANO DAI PREFERITI
-	@Override
-	public void removeFavorite(Long userId, Long trackId) {
-
-	    // RECUPERO USER
-	    User user = userRepository.findByIdWithFavorites(userId)
-	            .orElseThrow(() ->
-	                    new ResourceNotFoundException("User not found"));
-
-	    // CERCA RELAZIONE USER - TRACK
-	    UserFavoriteTrack favorite =
-	            user.getFavoriteTracks()
-	                    .stream()
-	                    .filter(f ->
-	                            f.getTrack()
-	                             .getId()
-	                             .equals(trackId))
-	                    .findFirst()
-	                    .orElseThrow(() ->
-	                            new ResourceNotFoundException(
-	                                    "Track not found in favorites"));
-
-	    // RIMOZIONE RELAZIONE
-	    user.getFavoriteTracks().remove(favorite);
-
-	    // SAVE USER
-	    userRepository.save(user);
-
-	    // TRACK USATA IN ALTRE PLAYLIST?
-	    boolean existsInPlaylists =
-	            playlistRepository
-	                    .existsByPlaylistTracks_Track_Id(trackId);
-
-	    // TRACK USATA IN ALTRI FAVORITES?
-	    boolean existsInFavorites =
-	            userRepository
-	                    .existsByFavoriteTracks_Track_Id(trackId);
-
-	    // ELIMINA TRACK ORFANA
-	    if (!existsInPlaylists && !existsInFavorites) {
-
-	        trackRepository.deleteById(trackId);
-	    }
+	
+	private CustomUserPrincipal getCustomUserPrincipal() {
+		return (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 }
