@@ -5,7 +5,6 @@ public class PatchUserRequest {
 	private String username;
 	private String firstName;
 	private String lastName;
-	private String email;
 	private String profileImageUrl;
 
 	public String getUsername() {
@@ -32,14 +31,6 @@ public class PatchUserRequest {
 		this.lastName = lastName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getProfileImageUrl() {
 		return profileImageUrl;
 	}
@@ -51,7 +42,7 @@ public class PatchUserRequest {
 	@Override
 	public String toString() {
 		return "PatchUserRequest [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + ", profileImageUrl=" + profileImageUrl + "]";
+				+ ", profileImageUrl=" + profileImageUrl + "]";
 	}
 
 }

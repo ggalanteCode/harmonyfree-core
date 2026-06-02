@@ -1,5 +1,5 @@
-
 package com.generation153.harmonyfree.core.controller;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +33,7 @@ public class UserController {
 	}
 	
 	//NON CI SONO CHIAMATE PUBBLICHE IN USERCONTROLLER
+	//SOLO USER E/O ADMIN
 
 	//Creazione profilo (una sola volta dopo il login)
 	//POSSONO FARLA SIA USER CHE ADMIN, NO PUBBLICA
@@ -45,47 +46,46 @@ public class UserController {
 	
 	@GetMapping("/me")
     public UserResponse getMe() {
-        return null;
+        return userService.getCurrentUser();
     }
 
 	@PutMapping("/me")
 	public UserResponse updateMe(@RequestBody UpdateUserRequest request) {
-		return null;
+		return userService.updateCurrentUser(request);
 	}
 
 	@PatchMapping("/me")
 	public UserResponse patchMe(@RequestBody PatchUserRequest request) {
-		return null;
+		return userService.patchCurrentUser(request);
 	}
 	
 	@DeleteMapping("/me")
     public void deleteMe() {
-		
+		userService.deleteCurrentUser();
     }
 	
 	//SEZIONE FAVORITES
 
 	@PostMapping("/me/favorites")
 	public List<TrackResponse> addFavorite(@RequestBody AddTrackRequest request) {
-		return null;
+		return userService.addFavoriteToCurrentUser(request);
 	}
 
 	@GetMapping("/me/favorites")
 	public List<TrackResponse> getFavorites() {
-		return null;
+		return userService.getCurrentUserFavorites();
 	}
 
 	@DeleteMapping("/me/favorites/{trackId}")
 	public void removeFavorite(@PathVariable Long trackId) {
-		
+		userService.removeFavoriteFromCurrentUser(trackId);
 	}
 	
 	//SEZIONE PLAYLISTS DELL’UTENTE
 
 	@GetMapping("/me/playlists")
-	public List<PlaylistResponse> getUserPlaylists() {
-		return null;
-
+	public List<PlaylistResponse> getMyPlaylists() {
+		return userService.getCurrentUserPlaylists();
 	}
 	
 	//SEZIONE ADMIN ONLY (opzionale)
