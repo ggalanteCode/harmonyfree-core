@@ -24,10 +24,10 @@ public class StatsController {
 
 	// TRACK PIU USATE
 	// API: GET http://localhost:8080/api/v1/stats/tracks/most-played
-	@GetMapping("/tracks/most-played")
-	public List<TrackStatsResponse> getMostPlayedTracks(@RequestParam(defaultValue = "10") int limit) {
+	@GetMapping("/tracks/most-popular")
+	public List<TrackStatsResponse> getMostPopularTracks(@RequestParam(defaultValue = "10") int limit) {
 
-		return statsService.getMostPlayedTracks(limit);
+		return statsService.getMostPopularTracks(limit);
 	}
 
 	// TRACK PIU AGGIUNTE AI PREFERITI

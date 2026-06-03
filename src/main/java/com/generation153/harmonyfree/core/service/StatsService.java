@@ -6,7 +6,7 @@ import com.generation153.harmonyfree.core.dto.stats.TrackStatsResponse;
 
 public interface StatsService {
 
-    List<TrackStatsResponse> getMostPlayedTracks(int limit);
+    List<TrackStatsResponse> getMostPopularTracks(int limit);
     
     List<TrackStatsResponse> getMostFavoritedTracks(int limit);
 
