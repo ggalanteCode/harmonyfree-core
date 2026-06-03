@@ -23,24 +23,31 @@ public class StatsServiceImpl implements StatsService {
     // TRACK PIU UTILIZZATE
 
     @Override
-    public List<TrackStatsResponse> getMostPlayedTracks(int limit) {
+    public List<TrackStatsResponse> getMostPopularTracks(int limit) {
 
+    	// Verifica che il numero massimo di risultati richiesti sia valido
         if (limit <= 0) {
             throw new BadRequestException("Limit must be > 0");
         }
 
+        // Esegue la query recuperando le track ordinate per utilizzo
+        // limit determina il numero massimo di record restituiti
         List<Object[]> results =
-                trackRepository.findMostPlayedTracks(
+                trackRepository.findMostPopularTracks(
                         PageRequest.of(0, limit));
 
+        // Trasforma il risultato grezzo della query in DTO
         return results.stream()
                 .map(obj -> {
 
+                	// Primo elemento dell'array: Track
                     Track track = (Track) obj[0];
 
+                    // Secondo elemento dell'array: score calcolato dalla query
                     Long score =
                             ((Number) obj[1]).longValue();
 
+                    // Costruzione del DTO restituito al controller
                     return new TrackStatsResponse(
                             track.getId(),
                             track.getTitle(),
@@ -57,22 +64,28 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<TrackStatsResponse> getMostFavoritedTracks(int limit) {
 
+    	// Verifica che il numero massimo di risultati richiesti sia valido
         if (limit <= 0) {
             throw new BadRequestException("Limit must be > 0");
         }
 
+        // Esegue la query recuperando le track ordinate per numero di preferiti
         List<Object[]> results =
                 trackRepository.findMostFavoritedTracks(
                         PageRequest.of(0, limit));
 
+        // Trasforma il risultato grezzo della query in DTO
         return results.stream()
                 .map(obj -> {
 
+                	// Primo elemento dell'array: Track
                     Track track = (Track) obj[0];
 
+                    // Secondo elemento dell'array: numero di preferiti
                     Long count =
                             ((Number) obj[1]).longValue();
 
+                    // Costruzione del DTO restituito al controller
                     return new TrackStatsResponse(
                             track.getId(),
                             track.getTitle(),

@@ -24,14 +24,14 @@ public interface TrackRepository extends JpaRepository<Track, Long> {
 			    GROUP BY t
 			    ORDER BY COUNT(DISTINCT pt.id) + COUNT(DISTINCT uft.id) DESC
 			""")
-	List<Object[]> findMostPlayedTracks(Pageable pageable);
+	List<Object[]> findMostPopularTracks(Pageable pageable);
 	
 
 	@Query("""
 			    SELECT t,
 			           COUNT(uft.id)
 			    FROM Track t
-			    LEFT JOIN UserFavoriteTrack uft
+			    JOIN UserFavoriteTrack uft
 			           ON uft.track = t
 			    GROUP BY t
 			    ORDER BY COUNT(uft.id) DESC
