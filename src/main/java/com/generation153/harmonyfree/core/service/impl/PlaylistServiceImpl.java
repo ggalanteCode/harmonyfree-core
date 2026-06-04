@@ -29,7 +29,9 @@ import com.generation153.harmonyfree.core.security.model.CustomUserPrincipal;
 import com.generation153.harmonyfree.core.service.PlaylistService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaylistServiceImpl implements PlaylistService {
@@ -218,6 +220,9 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public PlaylistResponse addTrackToPlaylist(Long playlistId, AddTrackRequest request) {
+    	
+    	log.info("Playlist id: {}", playlistId);
+    	log.info("Jamendo track id: {}", request.getJamendoTrackId());
 
         // VALIDAZIONE
         if (request.getJamendoTrackId() == null) {
@@ -287,6 +292,12 @@ public class PlaylistServiceImpl implements PlaylistService {
             track.setCoverUrl(dto.getCoverUrl());
 
             track.setCreatedAt(LocalDateTime.now());
+            
+            track.setDownloadable(dto.getDownloadable());
+            
+            track.setDownloadUrl(dto.getDownloadUrl());
+            
+            track.setDuration(dto.getDuration());
 
             // SAVE TRACK
             track = trackRepository.save(track);
@@ -313,6 +324,8 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         // 🔹 SAVE PLAYLIST
         Playlist updatedPlaylist = playlistRepository.save(playlist);
+        
+        log.info("Tracks in playlist: {}", updatedPlaylist.getPlaylistTracks().size());
 
         // 🔹 RESPONSE
         return mapToPlaylistResponseWithTracks(updatedPlaylist);

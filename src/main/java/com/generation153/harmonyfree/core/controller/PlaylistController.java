@@ -11,7 +11,9 @@ import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
 import com.generation153.harmonyfree.core.service.PlaylistService;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/playlists")
 public class PlaylistController {
@@ -86,7 +88,7 @@ public class PlaylistController {
     public PlaylistResponse addTrackToPlaylist(
             @PathVariable Long id,
             @RequestBody AddTrackRequest request) {
-
+    	
         return playlistService.addTrackToPlaylist(id, request);
     }
     

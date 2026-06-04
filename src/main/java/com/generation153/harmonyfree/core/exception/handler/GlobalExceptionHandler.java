@@ -56,6 +56,12 @@ public class GlobalExceptionHandler {
         return buildError("Errore interno del server", HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiErrorDto> handleGeneric(RuntimeException ex) {
+        log.error(ex.getMessage(), ex);
+        return buildError(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
     //COSTRUISCI LA RESPONSE PER ERRORI DIVERSI DA QUELLI DI VALIDAZIONE
     private ResponseEntity<ApiErrorDto> buildError(String message, HttpStatus status) {
 

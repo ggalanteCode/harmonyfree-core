@@ -76,9 +76,9 @@ public class UserController {
 		return userService.getCurrentUserFavorites();
 	}
 
-	@DeleteMapping("/me/favorites/{trackId}")
-	public void removeFavorite(@PathVariable Long trackId) {
-		userService.removeFavoriteFromCurrentUser(trackId);
+	@DeleteMapping("/me/favorites/{localTrackId}")
+	public void removeFavorite(@PathVariable Long localTrackId) {
+		userService.removeFavoriteFromCurrentUser(localTrackId);
 	}
 	
 	//SEZIONE PLAYLISTS DELL’UTENTE
