@@ -364,6 +364,10 @@ public class PlaylistServiceImpl implements PlaylistService {
         response.setAudioUrl(track.getAudioUrl());
 
         response.setCreatedAt(track.getCreatedAt());
+        
+        response.setDownloadUrl(track.getDownloadUrl());
+        
+        response.setDownloadable(track.getDownloadable());
 
         return response;
     }

@@ -87,7 +87,9 @@ public class TrackServiceImpl implements TrackService {
                 extractGenres(dto), //lista dei generi musicali
                 dto.getDuration(),
                 dto.getCoverUrl(),
-                dto.getAudioUrl()
+                dto.getAudioUrl(),
+                dto.getDownloadUrl(),
+                dto.getDownloadable()
         );
 		return response;
 	}
@@ -148,6 +150,9 @@ public class TrackServiceImpl implements TrackService {
 	    track.setAudioUrl(dto.getAudioUrl());
 	    track.setCoverUrl(dto.getCoverUrl());
 	    track.setCreatedAt(LocalDateTime.now());
+	    
+	    track.setDownloadUrl(dto.getDownloadUrl());
+	    track.setDownloadable(dto.getDownloadable());
 
 	    List<String> genreNames = extractGenres(dto);
 
@@ -184,7 +189,9 @@ public class TrackServiceImpl implements TrackService {
 				track.getDuration(), 
 				track.getCoverUrl(), 
 				track.getAudioUrl(), 
-				track.getCreatedAt()
+				track.getCreatedAt(),
+				track.getDownloadUrl(),
+				track.getDownloadable()
 		);
 		
 	    return response;

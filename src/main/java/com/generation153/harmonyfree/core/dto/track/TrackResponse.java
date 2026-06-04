@@ -28,5 +28,8 @@ public class TrackResponse {
 	private String coverImageUrl;	//per poter visualizzare la copertina su frontend
 	private String audioUrl;	//per poter accedere al brano da ascoltare tramite frontend
 	private LocalDateTime createdAt;
+	
+	private String downloadUrl;		//URL per l'eventuale download del brano
+    private Boolean downloadable;	//ci dice se è possibile scaricare o meno il brano.
 
 }

@@ -388,6 +388,10 @@ public class UserServiceImpl implements UserService {
 
         track.setCreatedAt(LocalDateTime.now());
         
+        track.setDownloadUrl(dto.getDownloadUrl());
+        
+        track.setDownloadable(dto.getDownloadable());
+        
         //ESTRAI I NOMI DEI GENERI
         List<String> genreNames = extractGenres(dto);
 
@@ -455,6 +459,10 @@ public class UserServiceImpl implements UserService {
 
 	    response.setCreatedAt(
 	            track.getCreatedAt());
+	    
+	    response.setDownloadUrl(track.getDownloadUrl());
+	    
+	    response.setDownloadable(track.getDownloadable());
 
 	    return response;
 	}

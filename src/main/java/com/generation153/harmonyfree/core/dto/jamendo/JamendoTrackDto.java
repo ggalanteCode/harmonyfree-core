@@ -37,4 +37,10 @@ public class JamendoTrackDto {
     @JsonProperty("album_id")
     private Long albumId;
     
+    @JsonProperty("audiodownload")
+    private String downloadUrl;	//URL per l'eventuale download del brano
+
+    @JsonProperty("audiodownload_allowed")
+    private Boolean downloadable;	//ci dice se è possibile scaricare o meno il brano.
+    
 }
