@@ -57,6 +57,12 @@ public class Track {
 
     @Column(name = "cover_url", columnDefinition = "TEXT")
     private String coverUrl;
+    
+    @Column(name = "download_url", length = 1000)
+    private String downloadUrl;
+
+    @Column(name = "downloadable", nullable = false)
+    private Boolean downloadable;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
