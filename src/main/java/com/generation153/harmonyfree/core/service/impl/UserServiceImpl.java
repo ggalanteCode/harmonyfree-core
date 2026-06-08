@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
 		user.setCreatedAt(LocalDateTime.now());
-		user.setProfileImageUrl(request.getProfileImageUrl());
+		user.setProfileImageUrl(null);	//inizialmente, l'utente si registra senza caricare un'immagine del profilo.
 		
 		User saved = userRepository.save(user);
 		
