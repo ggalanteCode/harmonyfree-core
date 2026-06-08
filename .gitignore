@@ -7,6 +7,10 @@ target/
 src/main/resources/application.properties
 src/main/resources/application-secret.properties
 
+uploads/**
+!uploads/.gitkeep
+!uploads/profiles/.gitkeep
+
 ### STS ###
 .apt_generated
 .classpath
