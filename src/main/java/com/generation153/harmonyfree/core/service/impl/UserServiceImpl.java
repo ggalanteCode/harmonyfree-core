@@ -139,9 +139,6 @@ public class UserServiceImpl implements UserService {
 		if (request.getLastName() != null) {
 			userByAuthUserId.setLastName(request.getLastName());
 		}
-		if (request.getProfileImageUrl() != null) {
-			userByAuthUserId.setProfileImageUrl(request.getProfileImageUrl());
-		}
 		
 		userByAuthUserId.setUpdatedAt(LocalDateTime.now());
 		
