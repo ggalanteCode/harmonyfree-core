@@ -41,7 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/me", "/api/v1/users/me/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
-
+                        //PERMETTERE AL FRONTEND L'ACCESSO ALLE IMMAGINI PROFILO SALVATE NEL BACKEND
+                        .requestMatchers("/uploads/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

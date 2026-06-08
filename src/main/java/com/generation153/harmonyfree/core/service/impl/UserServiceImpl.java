@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackResponse;
@@ -16,13 +17,20 @@ import com.generation153.harmonyfree.core.dto.user.PatchUserRequest;
 import com.generation153.harmonyfree.core.dto.user.UpdateUserRequest;
 import com.generation153.harmonyfree.core.dto.user.UserResponse;
 import com.generation153.harmonyfree.core.entity.User;
+import com.generation153.harmonyfree.core.exception.BadRequestException;
 import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.UserRepository;
 import com.generation153.harmonyfree.core.security.model.CustomUserPrincipal;
 import com.generation153.harmonyfree.core.service.UserService;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -35,6 +43,7 @@ import com.generation153.harmonyfree.core.repository.GenreRepository;
 import com.generation153.harmonyfree.core.repository.PlaylistRepository;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -85,6 +94,51 @@ public class UserServiceImpl implements UserService {
 		
 		return mapToUserResponse(saved);
 		
+	}
+	
+	@Override
+	public UserResponse uploadAvatar(MultipartFile file) {
+		
+		if (file == null || file.isEmpty()) {
+		    throw new BadRequestException("Avatar file is required");
+		}
+		
+		CustomUserPrincipal principal = getCustomUserPrincipal();
+		Integer authUserId = principal.getUserId();
+		
+		User userByAuthUserId = userRepository.findByAuthUserId(authUserId)
+				.orElseThrow(() -> new ResourceNotFoundException("User corrente non trovato"));
+		
+		String filename;
+		try {
+			filename = saveAvatarFile(file, authUserId);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to save avatar", e);
+		}
+
+	    userByAuthUserId.setProfileImageUrl("/uploads/profiles/" + filename);
+
+	    userRepository.save(userByAuthUserId);
+
+	    return mapToUserResponse(userByAuthUserId);
+		
+	}
+	
+	private String saveAvatarFile(MultipartFile file, Integer authUserId) throws IOException {
+		
+		Path uploadDir = Paths.get("uploads/profiles");
+
+	    Files.createDirectories(uploadDir);
+
+	    String filename = "avatar_" + authUserId + ".jpg";
+
+	    Path destination = uploadDir.resolve(filename);
+
+	    log.info("upload directory absolute path: {}", uploadDir.toAbsolutePath());
+	    log.info("destination absolute path: {}", destination.toAbsolutePath());
+	    Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+	    return filename;
 	}
 	
 	@Override

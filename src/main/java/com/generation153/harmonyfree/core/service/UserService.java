@@ -2,6 +2,8 @@ package com.generation153.harmonyfree.core.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
 import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
@@ -13,6 +15,8 @@ import com.generation153.harmonyfree.core.dto.user.UserResponse;
 public interface UserService {
 	
 	UserResponse createUser(CreateUserRequest request);
+	
+	UserResponse uploadAvatar(MultipartFile file);
 	
 	UserResponse getCurrentUser();
 	
