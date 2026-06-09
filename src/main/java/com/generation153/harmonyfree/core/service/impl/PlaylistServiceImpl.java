@@ -22,6 +22,7 @@ import com.generation153.harmonyfree.core.entity.Playlist;
 import com.generation153.harmonyfree.core.entity.PlaylistTrack;
 import com.generation153.harmonyfree.core.entity.Track;
 import com.generation153.harmonyfree.core.entity.User;
+import com.generation153.harmonyfree.core.exception.ResourceNotFoundException;
 import com.generation153.harmonyfree.core.repository.PlaylistRepository;
 import com.generation153.harmonyfree.core.repository.TrackRepository;
 import com.generation153.harmonyfree.core.repository.UserRepository;
@@ -112,6 +113,27 @@ public class PlaylistServiceImpl implements PlaylistService {
     			.stream()
     			.map(playlist -> mapToPlaylistResponse(playlist))
     			.toList();
+    }
+    
+    @Override
+    public List<PlaylistResponse> getPublicPlaylists() {
+    	
+    	List<Playlist> playlists = playlistRepository.findByIsPublicTrue();
+    	
+	   	return playlists
+	   			.stream()
+    			.map(playlist -> mapToPlaylistResponse(playlist))
+    			.toList();
+    }
+    
+    @Override
+    public PlaylistResponse getPublicPlaylistById(Long id) {
+    	
+    	Playlist playlist = playlistRepository
+    	        .findByIdAndIsPublicTrue(id)
+    	        .orElseThrow(() -> new RuntimeException("the Playlist is not public"));
+    	
+	   	return mapToPlaylistResponse(playlist);
     }
     
     // PUT - UPDATE PLAYLIST

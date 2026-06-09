@@ -24,8 +24,8 @@ public class PlaylistController {
         this.playlistService = playlistService;
     }
     
-    //LE CHIAMATE DEL PlaylistController SONO TUTTE ACCESSIBILI SOLO DA UTENTI USER
-    //NO PUBBLICO, NO ADMIN
+    //LE CHIAMATE DEL PlaylistController SONO TUTTE ACCESSIBILI SOLO DA UTENTI USER, 
+    //AD ECCEZIONE DELLA GET PER RECUPERARE LE PLAYLIST PUBBLICHE (getPublicPlaylists) CHE E' PUBBLICA
 
     // API: POST http://localhost:8080/api/v1/playlists
     // Crea una playlist dell'utente autenticato
@@ -45,6 +45,17 @@ public class PlaylistController {
     @GetMapping("/me")
     public List<PlaylistResponse> getMyPlaylists() {
     	return playlistService.getMyPlaylists();
+    }
+    
+    // API: GET http://localhost:8080/api/v1/playlists/public
+    @GetMapping("/public")
+    public List<PlaylistResponse> getPublicPlaylists() {
+        return playlistService.getPublicPlaylists();
+    }
+    
+    @GetMapping("/public/{id}")
+    public PlaylistResponse getPublicPlaylistById(@PathVariable Long id) {
+        return playlistService.getPublicPlaylistById(id);
     }
     
     // API: PUT http://localhost:8080/api/v1/playlists/{id}

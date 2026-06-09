@@ -34,7 +34,7 @@ public class TrackSearchRequest {
 
     @Min(1)
     @Max(50)
-    private int limit = 50;
+    private int limit = 20;
     
 	@Override
 	public String toString() {
