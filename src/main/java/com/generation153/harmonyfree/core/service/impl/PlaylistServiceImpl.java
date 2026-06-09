@@ -133,7 +133,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     	        .findByIdAndIsPublicTrue(id)
     	        .orElseThrow(() -> new RuntimeException("the Playlist is not public"));
     	
-	   	return mapToPlaylistResponse(playlist);
+	   	return mapToPlaylistResponseWithTracks(playlist);
     }
     
     // PUT - UPDATE PLAYLIST
