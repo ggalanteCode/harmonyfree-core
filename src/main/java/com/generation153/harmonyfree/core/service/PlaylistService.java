@@ -15,6 +15,10 @@ public interface PlaylistService {
     PlaylistResponse getPlaylistById(Long id);
     
     List<PlaylistResponse> getMyPlaylists();
+    
+    List<PlaylistResponse> getPublicPlaylists();
+    
+    PlaylistResponse getPublicPlaylistById(Long id);
 
 	PlaylistResponse updatePlaylist(Long id, UpdatePlaylistRequest request);
 

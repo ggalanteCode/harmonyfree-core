@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                 		//PERMESSI CHIAMATE Playlist
+                		.requestMatchers("/api/v1/playlists/public", "/api/v1/playlists/public/*").permitAll()
                 		.requestMatchers("/api/v1/playlists/**").hasRole("USER")
                 		//PERMESSI CHIAMATE Stats
                 		.requestMatchers(HttpMethod.GET, "/api/v1/stats/**").permitAll()
