@@ -5,6 +5,13 @@ target/
 !**/src/test/**/target/
 
 src/main/resources/application.properties
+src/main/resources/application-secret.properties
+
+uploads/**
+!uploads/
+!uploads/profiles/
+!uploads/.gitkeep
+!uploads/profiles/.gitkeep
 
 ### STS ###
 .apt_generated

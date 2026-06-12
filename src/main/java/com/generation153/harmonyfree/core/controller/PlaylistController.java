@@ -1,0 +1,116 @@
+package com.generation153.harmonyfree.core.controller;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import com.generation153.harmonyfree.core.dto.playlist.CreatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.playlist.PlaylistResponse;
+import com.generation153.harmonyfree.core.dto.playlist.UpdatePlaylistRequest;
+import com.generation153.harmonyfree.core.dto.track.AddTrackRequest;
+import com.generation153.harmonyfree.core.dto.track.TrackResponse;
+import com.generation153.harmonyfree.core.service.PlaylistService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/v1/playlists")
+public class PlaylistController {
+
+    private final PlaylistService playlistService;
+
+    public PlaylistController(PlaylistService playlistService) {
+        this.playlistService = playlistService;
+    }
+    
+    //LE CHIAMATE DEL PlaylistController SONO TUTTE ACCESSIBILI SOLO DA UTENTI USER, 
+    //AD ECCEZIONE DELLA GET PER RECUPERARE LE PLAYLIST PUBBLICHE (getPublicPlaylists) CHE E' PUBBLICA
+
+    // API: POST http://localhost:8080/api/v1/playlists
+    // Crea una playlist dell'utente autenticato
+    @PostMapping
+    public PlaylistResponse createPlaylist(@RequestBody CreatePlaylistRequest request) {
+        return playlistService.createPlaylist(request);
+    }
+
+    // API: GET http://localhost:8080/api/v1/playlists/{id}
+    // Dettaglio playlist
+    @GetMapping("/{id}")
+    public PlaylistResponse getPlaylistById(@PathVariable Long id) {
+        return playlistService.getPlaylistById(id);
+    }
+    
+    // Tutte le playlist dell'utente autenticato
+    @GetMapping("/me")
+    public List<PlaylistResponse> getMyPlaylists() {
+    	return playlistService.getMyPlaylists();
+    }
+    
+    // API: GET http://localhost:8080/api/v1/playlists/public
+    @GetMapping("/public")
+    public List<PlaylistResponse> getPublicPlaylists() {
+        return playlistService.getPublicPlaylists();
+    }
+    
+    @GetMapping("/public/{id}")
+    public PlaylistResponse getPublicPlaylistById(@PathVariable Long id) {
+        return playlistService.getPublicPlaylistById(id);
+    }
+    
+    // API: PUT http://localhost:8080/api/v1/playlists/{id}
+    // Aggiorna playlist
+    @PutMapping("/{id}")
+    public PlaylistResponse updatePlaylist(
+            @PathVariable Long id,
+            @RequestBody UpdatePlaylistRequest request) {
+
+        return playlistService.updatePlaylist(id, request);
+    }
+    
+    // API: PATCH http://localhost:8080/api/v1/playlists/{id}
+    // Aggiornamento parziale playlist
+    @PatchMapping("/{id}")
+    public PlaylistResponse patchPlaylist(
+            @PathVariable Long id,
+            @RequestBody UpdatePlaylistRequest request) {
+
+        return playlistService.patchPlaylist(id, request);
+    }
+    
+    // API: DELETE http://localhost:8080/api/v1/playlists/{id}
+    // Elimina playlist
+    @DeleteMapping("/{id}")
+    public void deletePlaylist(@PathVariable Long id) {
+        playlistService.deletePlaylist(id);
+    }
+    
+    // API: GET http://localhost:8080/api/v1/playlists/{id}/tracks
+    // Tracce della playlist
+    @GetMapping("/{id}/tracks")
+    public List<TrackResponse> getPlaylistTracks(@PathVariable Long id) {
+
+        return playlistService.getPlaylistTracks(id);
+    }
+    
+    // API: POST http://localhost:8080/api/v1/playlists/{id}/tracks
+    // Aggiunge traccia alla playlist
+    @PostMapping("/{id}/tracks")
+    public PlaylistResponse addTrackToPlaylist(
+            @PathVariable Long id,
+            @RequestBody AddTrackRequest request) {
+    	
+        return playlistService.addTrackToPlaylist(id, request);
+    }
+    
+    // API: DELETE http://localhost:8080/api/v1/playlists/{playlistId}/tracks/{trackId}
+    // Rimuove traccia dalla playlist
+    @DeleteMapping("/{playlistId}/tracks/{trackId}")
+    public void removeTrackFromPlaylist(
+            @PathVariable Long playlistId,
+            @PathVariable Long trackId) {
+
+        playlistService.removeTrackFromPlaylist(playlistId, trackId);
+    }
+ 
+}
