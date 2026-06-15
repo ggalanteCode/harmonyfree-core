@@ -39,6 +39,7 @@ public class JamendoClient {
                             .queryParam("format", "json")
                             .queryParam("limit", Math.min(request.getLimit(), 200))
                             .queryParam("offset", request.getOffset())
+                            .queryParam("fullcount", true)
                             .queryParamIfPresent("search", Optional.ofNullable(request.getQuery()))
                             .queryParamIfPresent("name", Optional.ofNullable(request.getTitle()))
                             .queryParamIfPresent("artist_name", Optional.ofNullable(request.getArtist()))

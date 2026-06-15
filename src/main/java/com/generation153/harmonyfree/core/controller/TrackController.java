@@ -1,16 +1,14 @@
 package com.generation153.harmonyfree.core.controller;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.generation153.harmonyfree.core.dto.track.TrackPageResponse;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
 import com.generation153.harmonyfree.core.dto.track.TrackSearchRequest;
-import com.generation153.harmonyfree.core.dto.track.TrackSearchResponse;
 import com.generation153.harmonyfree.core.service.TrackService;
 
 import jakarta.validation.Valid;
@@ -30,7 +28,7 @@ public class TrackController {
     //LE CHIAMATE DEL TrackController SONO TUTTE PUBBLICHE
     
     @GetMapping
-    public List<TrackSearchResponse> getTracks(@Valid @ModelAttribute TrackSearchRequest request) {
+    public TrackPageResponse getTracks(@Valid @ModelAttribute TrackSearchRequest request) {
     	log.info("request: " + request);
         return trackService.getTracks(request);
     }

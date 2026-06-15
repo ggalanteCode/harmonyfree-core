@@ -10,6 +10,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class JamendoSearchResponse {
+	
+	private JamendoHeaders headers;
 
     private List<JamendoTrackDto> results;
    
