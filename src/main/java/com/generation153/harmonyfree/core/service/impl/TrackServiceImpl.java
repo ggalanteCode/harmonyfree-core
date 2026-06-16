@@ -11,6 +11,7 @@ import com.generation153.harmonyfree.core.client.JamendoClient;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoSearchResponse;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackDto;
 import com.generation153.harmonyfree.core.dto.jamendo.JamendoTrackResponse;
+import com.generation153.harmonyfree.core.dto.track.TrackPageResponse;
 import com.generation153.harmonyfree.core.dto.track.TrackResponse;
 import com.generation153.harmonyfree.core.dto.track.TrackSearchRequest;
 import com.generation153.harmonyfree.core.dto.track.TrackSearchResponse;
@@ -43,7 +44,7 @@ public class TrackServiceImpl implements TrackService {
 	}
 
 	@Override
-	public List<TrackSearchResponse> getTracks(TrackSearchRequest request) {
+	public TrackPageResponse getTracks(TrackSearchRequest request) {
 		
 		//chiamata al client
 	    JamendoSearchResponse response = jamendoClient.searchTracks(request);
@@ -51,15 +52,37 @@ public class TrackServiceImpl implements TrackService {
 	    log.info("response: "+response);
 
 	    //gestione empty/null
-	    if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
-	    	log.info("response list empty");
-	        return Collections.emptyList();
-	    }
+	    if (response == null || response.getResults() == null) {
+
+            TrackPageResponse empty = new TrackPageResponse();
+
+            empty.setContent(Collections.emptyList());
+            empty.setOffset(request.getOffset());
+            empty.setLimit(request.getLimit());
+            empty.setHasNext(false);
+
+            return empty;
+            
+        }
 
 	    //mapping
-	    return response.getResults().stream()
-	            .map(dto -> mapToTrackSearchResponse(dto))
-	            .toList();
+	    List<TrackSearchResponse> content = response.getResults()
+	                    .stream()
+	                    .map(this::mapToTrackSearchResponse)
+	                    .toList();
+
+	    Long total = response.getHeaders().getResultsFullCount();
+
+	    TrackPageResponse page = new TrackPageResponse();
+
+	    page.setContent(content);
+	    page.setOffset(request.getOffset());
+	    page.setLimit(request.getLimit());
+	    page.setTotalElements(total);
+
+	    page.setHasNext(total != null && request.getOffset() + request.getLimit() < total);
+
+	    return page;
 		
 	}
 	
