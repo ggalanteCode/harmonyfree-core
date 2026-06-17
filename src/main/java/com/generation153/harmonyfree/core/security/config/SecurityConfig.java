@@ -1,6 +1,7 @@
 package com.generation153.harmonyfree.core.security.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +23,8 @@ public class SecurityConfig {
 	
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	@Value("${app.cors.allowed-origin}")
-	private String allowedOrigin;
+	@Value("#{'${app.cors.allowed-origins}'.split(',')}")
+	private List<String> allowedOrigins;
 
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
 		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -58,12 +59,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         
 		CorsConfiguration configuration = new CorsConfiguration();
+		
+		//rimuoviamo tutti gli eventuali spazi tra un url e l'altro
+		allowedOrigins = allowedOrigins.stream()
+			    .map(String::trim)
+			    .toList();
         
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5500",
-            "http://192.168.1.107:5500",
-            allowedOrigin
-        ));
+        configuration.setAllowedOrigins(allowedOrigins);
         
         configuration.setAllowedMethods(Arrays.asList(
         		"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
