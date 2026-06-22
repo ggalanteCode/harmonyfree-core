@@ -116,6 +116,17 @@ public class TrackServiceImpl implements TrackService {
         );
 		return response;
 	}
+	
+	@Override
+	public List<TrackSearchResponse> getLatestTracks(int limit) {
+		
+		TrackSearchRequest request = new TrackSearchRequest();
+
+	    request.setLimit(Math.min(limit, 20));
+
+	    return getTracks(request).getContent();
+		
+	}
 
 	@Override
 	public TrackResponse getTrackById(Long jamendoTrackId) {
